@@ -2,8 +2,13 @@ from modules.koapy.koapywrapper import KoapyWrapper
 from modules.client.client import Client
 import json
 import time
+import sys
+import getopt
+
 # main func
-def main(market: str,sector=None):
+
+
+def main(market: str, sector=None):
     sectors = getSectors(market)
     results = []
     sectorDict = {}
@@ -20,15 +25,19 @@ def main(market: str,sector=None):
             sectorDict['data'] = getStockInfoBySector(market, s['code'])
             results.append(sectorDict)
 
-    return sendStockInfo(results)   
-# 섹터 정보 가져오기 
+    return sendStockInfo(results)
+# 섹터 정보 가져오기
+
+
 def getSectors(market: str):
     sectors = req.getSectors(market)
-    
+
     return sectors
 
-# 섹터 별 주가정보           
-def getStockInfoBySector(market: str,sector: str):
+# 섹터 별 주가정보
+
+
+def getStockInfoBySector(market: str, sector: str):
     sectorList = []
 
     if(market == 'kospi'):
@@ -44,9 +53,11 @@ def getStockInfoBySector(market: str,sector: str):
     return sectorList
 
 # 섹터 별 주가정보 서버로 전송
+
+
 def sendStockInfo(sectorList: list):
-    
-    if isinstance(sectorList,list):
+
+    if isinstance(sectorList, list):
         res = []
         for sector in sectorList:
             print('[request datas]')
@@ -56,17 +67,53 @@ def sendStockInfo(sectorList: list):
         return res
     else:
         return None
-    
-# define global variables
-req = Client()
-print('[success connected lumen server]')
 
-koapy = KoapyWrapper()
+
+def getParams():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hm:s:', [
+                                   'market=', 'sector='])
+    except getopt.GetoptError:
+        print('main.py -m <market code> -s <sector code>')
+        sys.exit(2)
+    market = None
+    sector = None
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print('main.py -m <market code> -s <sector code>')
+            sys.exit()
+        elif opt in ('-m', '--market'):
+            market = arg
+        elif opt in ('-s', '--sector'):
+            sector = arg
+    if market:
+        print('[input market code]: ', market)
+    else:
+        print('main.py -m <market code> -s <sector code>')
+        sys.exit()
+
+    if sector:
+        print('[input sector code]:', sector)
+    else:
+        print('main.py -m <market code> -s <sector code>')
+        sys.exit()
+
+    return market, sector
+
+    # define global variables
+
 
 # start main code
 if __name__ == "__main__":
+    market, sector = getParams()
+
+    req = Client()
+    print('[success connected lumen server]')
+
+    koapy = KoapyWrapper()
+
     # market={0:코스피}}, sector={013:전자기기}:
-    response = main('kospi','013')
+    response = main(str(market), str(sector))
 
     print(response)
-    

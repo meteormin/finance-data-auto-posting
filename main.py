@@ -5,9 +5,8 @@ import time
 import sys
 import getopt
 
+
 # main func
-
-
 def main(market: str, sector=None):
     sectors = getSectors(market)
     results = []
@@ -26,17 +25,16 @@ def main(market: str, sector=None):
             results.append(sectorDict)
 
     return sendStockInfo(results)
+
+
 # 섹터 정보 가져오기
-
-
 def getSectors(market: str):
     sectors = req.getSectors(market)
 
     return sectors
 
+
 # 섹터 별 주가정보
-
-
 def getStockInfoBySector(market: str, sector: str):
     sectorList = []
 
@@ -52,9 +50,24 @@ def getStockInfoBySector(market: str, sector: str):
 
     return sectorList
 
+
+def getSectorInfo(market: str, sector: str):
+    sectorInfo = []
+
+    if(market == 'kospi'):
+        market = '0'
+    elif(market == 'kosdaq'):
+        market = '1'
+
+    if(sector == None):
+        sectorList = koapy.getSectorInfoAsList('013', market)
+    else:
+        sectorList = koapy.getSectorInfoAsList(sector, market)
+
+    return sectorList
+
+
 # 섹터 별 주가정보 서버로 전송
-
-
 def sendStockInfo(sectorList: list):
 
     if isinstance(sectorList, list):
@@ -69,6 +82,7 @@ def sendStockInfo(sectorList: list):
         return None
 
 
+# get parameters
 def getParams():
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hm:s:', [
@@ -101,16 +115,16 @@ def getParams():
 
     return market, sector
 
-    # define global variables
-
 
 # start main code
 if __name__ == "__main__":
     market, sector = getParams()
 
+    # define global variable req
     req = Client()
     print('[success connected lumen server]')
 
+    # define global variable Koapy
     koapy = KoapyWrapper()
 
     # market={0:코스피}}, sector={013:전자기기}:

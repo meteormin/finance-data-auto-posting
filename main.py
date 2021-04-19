@@ -16,12 +16,26 @@ def main(market: str, sector=None):
         sectorDict['code'] = sector
         sectorDict['name'] = sectors['sectors_raw'][sector]
         sectorDict['data'] = getStockInfoBySector(market, sector)
+        tempList = []
+        for stock in sectorDict['data']:
+            basic = getStockBasicInfo(stock['code'])
+            tempList.append(basic)
+            time.sleep(0.1)
+        sectorDict['data'] = tempList
         results.append(sectorDict)
+
     else:
         for s in sectors['sectors']:
             sectorDict['code'] = s['code']
             sectorDict['name'] = s['name']
             sectorDict['data'] = getStockInfoBySector(market, s['code'])
+
+            tempList = []
+            for stock in sectorDict['data']:
+                basic = getStockBasicInfo(stock['code'])
+                tempList.append(basic)
+                time.sleep(0.1)
+            sectorDict['data'] = tempList
             results.append(sectorDict)
 
     return sendStockInfo(results)
@@ -49,6 +63,10 @@ def getStockInfoBySector(market: str, sector: str):
         sectorList = koapy.getStockInfoBySectorAsList(sector, market)
 
     return sectorList
+
+
+def getStockBasicInfo(code: str):
+    return koapy.getStockBasicInfoAsDict(code)
 
 
 def getSectorInfo(market: str, sector: str):

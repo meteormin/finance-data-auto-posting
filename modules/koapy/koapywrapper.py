@@ -1,6 +1,7 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
 import logging
 from modules.koapy.stockinfo import StockInfo
+from modules.koapy.basicinfo import BasicInfo
 
 logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(message)s - %(filename)s:%(lineno)d',
@@ -57,7 +58,10 @@ class KoapyWrapper:
         Returns:
             dict: ... ref: 'koapy get stockinfo -h'
         """
-        return self._koapy.GetStockBasicInfoAsDict(code)
+        basicDict = self._koapy.GetStockBasicInfoAsDict(code)
+        basicInfo = BasicInfo()
+
+        return basicInfo.map(basicDict).toDict()
 
     def getDailyStockDataAsDataFrame(self, code: str):
         """ get daily stock data

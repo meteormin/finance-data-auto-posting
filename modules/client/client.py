@@ -3,6 +3,7 @@ from configparser import ConfigParser
 import os
 import json
 
+
 class Client:
     """ just Http request client
     Attributes:
@@ -11,15 +12,17 @@ class Client:
         _client_secret (str): Oauth2.0 client_secret
         _token (str): access_token
     """
+
     def __init__(self):
         config = ConfigParser()
-        config.read(os.path.dirname(os.path.realpath(__file__)) + '/client.ini')
-        
-        self._host = config.get('access_info','client_host')
-        self._client_id = config.get('access_info','client_id')
-        self._client_secret = config.get('access_info','client_secret')
+        config.read(os.path.dirname(
+            os.path.realpath(__file__)) + '/client.ini')
+
+        self._host = config.get('access_info', 'client_host')
+        self._client_id = config.get('access_info', 'client_id')
+        self._client_secret = config.get('access_info', 'client_secret')
         self._token = None
-        
+
     def getToken(self):
         """get access token
 
@@ -34,7 +37,7 @@ class Client:
                 "client_secret": self._client_secret
             }
 
-            res = requests.post(self._host + end_point,data=body).json()
+            res = requests.post(self._host + end_point, data=body).json()
             self._token = res['access_token']
             return self._token
         else:
@@ -52,36 +55,46 @@ class Client:
         if(res.status_code == requests.codes.ok):
             return res.json()
         else:
-            return res.text 
+            return res.text
 
-    def getSectors(self,market = ''):
+    def getSectors(self, market=''):
         """get sectors information
         Args:
             market (str): market code
         Returns:
             dict:
         """
-        
+
         end_point = '/api/sectors/' + market
-        res = requests.get(self._host + end_point,headers={'Authorization':'Bearer ' + self.getToken()})
+        res = requests.get(
+            self._host + end_point, headers={'Authorization': 'Bearer ' + self.getToken()})
         if(res.status_code == requests.codes.ok):
             return res.json()
         else:
             return res.text
 
-    def postStocks(self,stocks):
+    def postThemeList(self, themes):
+        end_point = '/api/themes'
+        res = requests.post(self._host + end_point, json=themes,
+                            headers={'Authorization': 'Bearer ' + self.getToken()})
+        if(res.status_code == requests.codes.ok):
+            return res.json()
+        else:
+            return res.text
+
+    def postStocks(self, method, stocks):
         """ send to stocks information
         Args:
             stocks (list): list of StockInfo dict
         Returns:
             dict:
         """
-        end_point = '/api/stocks'
+        end_point = '/api/stocks/' + method
 
-        res = requests.post(self._host + end_point,json=stocks,headers={'Authorization':'Bearer ' + self.getToken()})
+        res = requests.post(self._host + end_point, json=stocks,
+                            headers={'Authorization': 'Bearer ' + self.getToken()})
 
         if(res.status_code == requests.codes.ok):
             return res.json()
         else:
-            return res.text 
-
+            return res.text

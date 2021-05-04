@@ -5,9 +5,10 @@ import time
 import sys
 import getopt
 
-
 # main func
-def main(market: str, sector=None):
+
+
+def getBySector(market: str, sector=None):
     sectors = getSectors(market)
     results = []
     sectorDict = {}
@@ -38,7 +39,7 @@ def main(market: str, sector=None):
             sectorDict['data'] = tempList
             results.append(sectorDict)
 
-    return sendStockInfo(results)
+    return sendStockInfo('sector', results)
 
 
 # 섹터 정보 가져오기
@@ -86,57 +87,120 @@ def getSectorInfo(market: str, sector: str):
 
 
 # 섹터 별 주가정보 서버로 전송
-def sendStockInfo(sectorList: list):
-
-    if isinstance(sectorList, list):
+def sendStockInfo(method, reqList: list):
+    if isinstance(reqList, list):
         res = []
-        for sector in sectorList:
+        for r in reqList:
             print('[request datas]')
-            print(sector)
-            res.append(req.postStocks(sector))
+            print(r)
+            res.append(req.postStocks(method, r))
             time.sleep(0.1)
+        print('[response data]')
+        print(res)
         return res
     else:
         return None
 
 
+def sendThemeList(results):
+    print('[request datas]')
+    print(results)
+
+    res = req.postThemeList({'data': results})
+
+    print('[response data]')
+    print(res)
+    return res
+
+
+def getByThemeList():
+    return koapy.getThemeGroupListAsDict()
+
+
+def getByTheme(theme):
+    themes = getByThemeList()
+    sendThemeList(themes)
+
+    tempList = []
+    results = []
+    themeDict = {}
+
+    if theme == 'all':
+        for value in themes:
+            stockCodes = koapy.getThemeGroupCodeAsList(str(value['code']))
+            for code in stockCodes:
+                basic = getStockBasicInfo(code)
+                tempList.append(basic)
+                time.sleep(0.1)
+            themeDict['code'] = value['code']
+            themeDict['name'] = value['name']
+            themeDict['data'] = tempList
+            results.append(themeDict)
+    else:
+        for value in themes:
+            if value['code'] == theme:
+                code = value['code']
+                name = value['name']
+        themeDict['code'] = code
+        themeDict['name'] = name
+        stockCodes = koapy.getThemeGroupCodeAsList(str(theme))
+        for code in stockCodes:
+            basic = getStockBasicInfo(code)
+            tempList.append(basic)
+            time.sleep(0.1)
+        themeDict['data'] = tempList
+        results.append(themeDict)
+
+    return sendStockInfo('theme', results)
+
 # get parameters
+
+
 def getParams():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hm:s:', [
-                                   'market=', 'sector='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hm:s:t:', [
+                                   'market=', 'sector=', 'theme='])
     except getopt.GetoptError:
         print('main.py -m <market code> -s <sector code>')
         sys.exit(2)
     market = None
     sector = None
-
+    theme = None
     for opt, arg in opts:
         if opt == '-h':
-            print('main.py -m <market code> -s <sector code>')
+            print('main.py -m <market code> -s <sector code> | -t <theme code>')
             sys.exit()
         elif opt in ('-m', '--market'):
             market = arg
         elif opt in ('-s', '--sector'):
             sector = arg
-    if market:
-        print('[input market code]: ', market)
+        elif opt in ('-t', '--theme'):
+            theme = arg
+        else:
+            print('main.py -m <market code> -s <sector code> | -t <theme code>')
+            sys.exit()
+    if theme:
+        print('[input theme code]: ', theme)
+        return {'theme': theme}
     else:
-        print('main.py -m <market code> -s <sector code>')
-        sys.exit()
+        if market:
+            print('[input market code]: ', market)
+        else:
+            print('main.py -m <market code> -s <sector code> | -t <theme code>')
+            sys.exit()
 
-    if sector:
-        print('[input sector code]:', sector)
-    else:
-        print('main.py -m <market code> -s <sector code>')
-        sys.exit()
+        if sector:
+            print('[input sector code]:', sector)
+        else:
+            print('main.py -m <market code> -s <sector code> | -t <theme code>')
+            sys.exit()
 
-    return market, sector
+    return {'market': market, 'sector': sector}
 
 
 # start main code
 if __name__ == "__main__":
-    market, sector = getParams()
+    params = getParams()
 
     # define global variable req
     req = Client()
@@ -145,7 +209,10 @@ if __name__ == "__main__":
     # define global variable Koapy
     koapy = KoapyWrapper()
 
-    # market={0:코스피}}, sector={013:전자기기}:
-    response = main(str(market), str(sector))
+    if 'theme' in params:
+        response = getByTheme(str(params['theme']))
+    elif 'market' in params and 'sector' in params:
+        # market={0:코스피}}, sector={013:전자기기}:
+        response = getBySector(str(params['market']), str(params['sector']))
 
     print(response)

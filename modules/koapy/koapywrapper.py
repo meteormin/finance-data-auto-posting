@@ -68,10 +68,32 @@ class KoapyWrapper:
         Args:
             code (str): stock code
         Returns:
-            Pandas.dataframe: 
+            Pandas.dataframe:
 
         """
         return self._koapy.GetDailyStockDataAsDataFrame(code)
+
+    def getThemeGroupListAsDict(self):
+        themeGroup = self._koapy.GetThemeGroupList(1)
+        return self.parseRawAsDictList(themeGroup)
+
+    def getThemeGroupCodeAsList(self, themeCode):
+        themeCodeList = self._koapy.GetThemeGroupCode(themeCode)
+        return themeCodeList.split(';')
+
+    def parseRawAsDictList(self, raw):
+        ls = raw.split(';')
+
+        rsList = []
+        for i in ls:
+            [code, name] = i.split('|')
+
+            rsDict = {}
+            rsDict['code'] = code
+            rsDict['name'] = name
+            rsList.append(rsDict)
+
+        return rsList
 
     def transactionCall(self, rqname: str, trcode: str, screenno: str, inputs):
         """call transaction(tr)

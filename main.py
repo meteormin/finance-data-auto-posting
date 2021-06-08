@@ -13,7 +13,7 @@ def getBySector(market: str, sector=None):
     results = []
     sectorDict = {}
 
-    if(sector):
+    if sector:
         sectorDict['code'] = sector
         sectorDict['name'] = sectors['sectors_raw'][sector]
         sectorDict['data'] = getStockInfoBySector(market, sector)
@@ -53,9 +53,9 @@ def getSectors(market: str):
 def getStockInfoBySector(market: str, sector: str):
     sectorList = []
 
-    if(market == 'kospi'):
+    if market == 'kospi':
         market = '0'
-    elif(market == 'kosdaq'):
+    elif market == 'kosdaq':
         market = '1'
 
     if(sector == None):
@@ -73,12 +73,12 @@ def getStockBasicInfo(code: str):
 def getSectorInfo(market: str, sector: str):
     sectorInfo = []
 
-    if(market == 'kospi'):
+    if market == 'kospi':
         market = '0'
-    elif(market == 'kosdaq'):
+    elif market == 'kosdaq':
         market = '1'
 
-    if(sector == None):
+    if sector is None:
         sectorList = koapy.getSectorInfoAsList('013', market)
     else:
         sectorList = koapy.getSectorInfoAsList(sector, market)

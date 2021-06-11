@@ -16,14 +16,14 @@ class BasicInfo:
         _currentPrice (int): stock current price
     """
 
-    def __init__(self, code='', name='', capital=0, per=0, roe=0, pbr=0, currentPrice=0):
+    def __init__(self, code='', name='', capital=0, per=0, roe=0, pbr=0, current_price=0):
         self.code = code
         self.name = name
         self.capital = capital
         self.per = per
         self.roe = roe
         self.pbr = pbr
-        self.currentPrice = currentPrice
+        self.current_price = current_price
 
     @property
     def code(self):
@@ -32,7 +32,6 @@ class BasicInfo:
     @code.setter
     def code(self, code: str):
         self._code = str(code)
-        return self
 
     @property
     def name(self):
@@ -41,7 +40,7 @@ class BasicInfo:
     @name.setter
     def name(self, name: str):
         self._name = str(name)
-        return self
+
 
     @property
     def capital(self):
@@ -50,7 +49,6 @@ class BasicInfo:
     @capital.setter
     def capital(self, capital):
         self._capital = capital
-        return self
 
     @property
     def per(self):
@@ -59,7 +57,6 @@ class BasicInfo:
     @per.setter
     def per(self, per):
         self._per = per
-        return self
 
     @property
     def roe(self):
@@ -68,7 +65,6 @@ class BasicInfo:
     @roe.setter
     def roe(self, roe):
         self._roe = roe
-        return self
 
     @property
     def pbr(self):
@@ -77,18 +73,16 @@ class BasicInfo:
     @pbr.setter
     def pbr(self, pbr):
         self._pbr = pbr
-        return self
 
     @property
-    def currentPrice(self):
-        return self._currentPrice
+    def current_price(self):
+        return self._current_price
 
-    @code.setter
-    def currentPrice(self, currentPrice: str):
-        self._currentPrice = currentPrice
-        return self
+    @current_price.setter
+    def current_price(self, current_price: str):
+        self._current_price = current_price
 
-    def toDict(self):
+    def to_dict(self):
         """StockInfo to dictionary
         you can __dict__ but, this class has private proerties
         so, if you use __dict__ then returns dictionary key is '_propertyname'
@@ -121,5 +115,5 @@ class BasicInfo:
             self.per = data['PER']
             self.roe = data['ROE']
             self.pbr = data['PBR']
-            self.currentPrice = data['현재가']
+            self.current_price = data['현재가']
         return self

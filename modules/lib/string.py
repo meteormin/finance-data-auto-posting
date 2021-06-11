@@ -1,7 +1,7 @@
 import re
 
 class Str:
-    
+    @staticmethod
     def snake(s: str):
         """ 
         Is it ironic that this function is written in camel case, yet it
@@ -13,5 +13,6 @@ class Str:
         subbed = underscorer1.sub(r'\1_\2', s)
         return underscorer2.sub(r'\1_\2', subbed).lower()
 
+    @staticmethod
     def camel(s: str):
-        return s.title().replace('_','')
+        return s.title().replace('_', '')

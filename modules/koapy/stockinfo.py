@@ -16,11 +16,11 @@ class StockInfo:
         _currentPrice (int): stock current price
     """
 
-    def __init__(self, code='', name='', currentPrice='0'):
+    def __init__(self, code='', name='', current_price='0'):
 
         self.code = code
         self.name = name
-        self.currentPrice = currentPrice
+        self.current_price = current_price
 
     @property
     def code(self):
@@ -29,7 +29,6 @@ class StockInfo:
     @code.setter
     def code(self, code: str):
         self._code = str(code)
-        return self
 
     @property
     def name(self):
@@ -38,18 +37,16 @@ class StockInfo:
     @name.setter
     def name(self, name: str):
         self._name = str(name)
-        return self
 
     @property
-    def currentPrice(self):
-        return self._currentPrice
+    def current_price(self):
+        return self._current_price
 
-    @code.setter
-    def currentPrice(self, currentPrice: str):
-        self._currentPrice = int(currentPrice)
-        return self
+    @current_price.setter
+    def current_price(self, current_price: str):
+        self._current_price = int(current_price)
 
-    def toDict(self):
+    def to_dict(self):
         """StockInfo to dictionary
         you can __dict__ but, this class has private proerties
         so, if you use __dict__ then returns dictionary key is '_propertyname'
@@ -78,5 +75,5 @@ class StockInfo:
         if isinstance(data, dict):
             self.code = data['종목코드']
             self.name = data['종목명']
-            self.currentPrice = data['현재가']
+            self.current_price = data['현재가']
         return self

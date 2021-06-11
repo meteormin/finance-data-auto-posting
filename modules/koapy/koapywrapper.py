@@ -61,7 +61,7 @@ class KoapyWrapper:
         basicDict = self._koapy.GetStockBasicInfoAsDict(code)
         basicInfo = BasicInfo()
 
-        return basicInfo.map(basicDict).toDict()
+        return basicInfo.map(basicDict).to_dict()
 
     def getDailyStockDataAsDataFrame(self, code: str):
         """ get daily stock data
@@ -137,7 +137,7 @@ class KoapyWrapper:
                 temp_dict = {}
                 for n, v in zip(names, value.values):
                     temp_dict[n] = v
-                multi.append(stockinfo.map(temp_dict).toDict())
+                multi.append(stockinfo.map(temp_dict).to_dict())
 
         return multi
 
@@ -165,6 +165,6 @@ class KoapyWrapper:
                 temp_dict = {}
                 for n, v in zip(names, value.values):
                     temp_dict[n] = v
-                multi.append(stockinfo.map(temp_dict).toDict())
+                multi.append(stockinfo.map(temp_dict).to_dict())
 
         return multi

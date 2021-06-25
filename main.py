@@ -11,7 +11,7 @@ import getopt
 
 def getBySector(market: str, sector=None):
     sectors = getSectors()
-    sendSectorList(sectors)
+    sendSectorList(sectors, market)
     results = []
     sectorDict = {}
 
@@ -55,11 +55,12 @@ def getSectors():
     sectors = koapy.getSectorList()
     return sectors
 
-def sendSectorList(results):
+
+def sendSectorList(results, market):
     print('[request datas]')
     print(results)
 
-    res = req.postSectorList({'data': results})
+    res = req.postSectorList({'data': results}, market)
 
     print('[response data]')
     print(res)

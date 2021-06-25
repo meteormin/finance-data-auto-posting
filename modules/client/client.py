@@ -99,8 +99,8 @@ class Client:
         else:
             return res.text
 
-    def postSectorList(self, sectors):
-        end_point = '/api/sectors'
+    def postSectorList(self, sectors, market = 'kospi'):
+        end_point = '/api/sectors/kospi'
         res = requests.post(self._host + end_point, json=sectors,
                             headers={'Authorization': 'Bearer ' + self.getToken()})
         if (res.status_code == requests.codes.ok):

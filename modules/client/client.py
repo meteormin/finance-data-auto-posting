@@ -29,7 +29,7 @@ class Client:
         Returns:
             str: access token
         """
-        if(self._token == None):
+        if (self._token == None):
             end_point = '/oauth/token'
             body = {
                 "grant_type": "client_credentials",
@@ -52,7 +52,7 @@ class Client:
 
         res = requests.get(self._host + end_point)
 
-        if(res.status_code == requests.codes.ok):
+        if (res.status_code == requests.codes.ok):
             return res.json()
         else:
             return res.text
@@ -68,7 +68,7 @@ class Client:
         end_point = '/api/sectors/' + market
         res = requests.get(
             self._host + end_point, headers={'Authorization': 'Bearer ' + self.getToken()})
-        if(res.status_code == requests.codes.ok):
+        if (res.status_code == requests.codes.ok):
             return res.json()
         else:
             return res.text
@@ -77,7 +77,7 @@ class Client:
         end_point = '/api/themes'
         res = requests.post(self._host + end_point, json=themes,
                             headers={'Authorization': 'Bearer ' + self.getToken()})
-        if(res.status_code == requests.codes.ok):
+        if (res.status_code == requests.codes.ok):
             return res.json()
         else:
             return res.text
@@ -94,7 +94,16 @@ class Client:
         res = requests.post(self._host + end_point, json=stocks,
                             headers={'Authorization': 'Bearer ' + self.getToken()})
 
-        if(res.status_code == requests.codes.ok):
+        if (res.status_code == requests.codes.ok):
+            return res.json()
+        else:
+            return res.text
+
+    def postSectorList(self, sectors):
+        end_point = '/api/sectors'
+        res = requests.post(self._host + end_point, json=sectors,
+                            headers={'Authorization': 'Bearer ' + self.getToken()})
+        if (res.status_code == requests.codes.ok):
             return res.json()
         else:
             return res.text

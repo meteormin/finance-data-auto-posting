@@ -168,3 +168,34 @@ class KoapyWrapper:
                 multi.append(stockinfo.map(temp_dict).to_dict())
 
         return multi
+
+    def getSectorList(self):
+
+        screenno = '2003'
+
+        inputs = {
+            '업종코드': '001'
+        }
+
+        rqname = '전업종지수요청'
+        trcode = 'OPT20003'
+
+        multi = []
+        for event in self.transactionCall(rqname, trcode, screenno, inputs):
+            names = event.single_data.names
+
+            multi_names = event.multi_data.names
+            multi_values = event.multi_data.values
+
+            stockinfo = StockInfo()
+            for value in multi_values:
+                temp_dict = {}
+                for n, v in zip(names, value.values):
+                    if n == '종목코드':
+                        temp_dict['code'] = v
+                    if n == '종목명':
+                        temp_dict['name'] = v
+
+                multi.append(temp_dict)
+
+        return multi

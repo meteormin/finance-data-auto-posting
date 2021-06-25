@@ -5,17 +5,24 @@ import time
 import sys
 import getopt
 
+
 # main func
 
 
 def getBySector(market: str, sector=None):
-    sectors = getSectors(market)
+    sectors = getSectors()
+    sendSectorList(sectors)
     results = []
     sectorDict = {}
 
     if sector:
+        sectorName = None
+        for s in sectors:
+            if sector == s['code']:
+                sectorName = s['name']
+
         sectorDict['code'] = sector
-        sectorDict['name'] = sectors['sectors_raw'][sector]
+        sectorDict['name'] = sectorName
         sectorDict['data'] = getStockInfoBySector(market, sector)
         tempList = []
         for stock in sectorDict['data']:
@@ -26,7 +33,7 @@ def getBySector(market: str, sector=None):
         results.append(sectorDict)
 
     else:
-        for s in sectors['sectors']:
+        for s in sectors:
             sectorDict['code'] = s['code']
             sectorDict['name'] = s['name']
             sectorDict['data'] = getStockInfoBySector(market, s['code'])
@@ -43,10 +50,20 @@ def getBySector(market: str, sector=None):
 
 
 # 섹터 정보 가져오기
-def getSectors(market: str):
-    sectors = req.getSectors(market)
-
+def getSectors():
+    # sectors = req.getSectors(market)
+    sectors = koapy.getSectorList()
     return sectors
+
+def sendSectorList(results):
+    print('[request datas]')
+    print(results)
+
+    res = req.postSectorList({'data': results})
+
+    print('[response data]')
+    print(res)
+    return res
 
 
 # 섹터 별 주가정보
@@ -58,7 +75,7 @@ def getStockInfoBySector(market: str, sector: str):
     elif market == 'kosdaq':
         market = '1'
 
-    if(sector == None):
+    if (sector == None):
         sectorList = koapy.getStockInfoBySectorAsList('013', market)
     else:
         sectorList = koapy.getStockInfoBySectorAsList(sector, market)
@@ -153,13 +170,14 @@ def getByTheme(theme):
 
     return sendStockInfo('theme', results)
 
+
 # get parameters
 
 
 def getParams():
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hm:s:t:', [
-                                   'market=', 'sector=', 'theme='])
+            'market=', 'sector=', 'theme='])
     except getopt.GetoptError:
         print('main.py -m <market code> -s <sector code>')
         sys.exit(2)

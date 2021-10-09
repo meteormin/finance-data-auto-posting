@@ -1,6 +1,8 @@
 import re
 
+
 class Str:
+
     @staticmethod
     def snake(s: str):
         """ 

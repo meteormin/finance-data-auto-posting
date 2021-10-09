@@ -1,42 +1,19 @@
-# AutomaticPosting-Python
-AutomaticPosting-Python
+# Finance Data Automatic Posting With Python
 
-# [Custom Koapy](https://github.com/miniyus/AutomaticPosting-Koapy/tree/master)
+## 주식 정보 자동 포스팅 파이썬
 
-# 설치방법
+**기본주가정보**와 **재무정보**를 분석하여 인포그래픽으로 블로그에 자동으로 포스팅
 
-```bash
-git clone https://github.com/miniyus/AutomaticPosting-Python.git
+1. 주가정보를 가져오기 위해 키움증권 Open API를 사용
+2. 재무정보를 가져오기 위해 OpenDart API를 사용
+3. 포스팅할 블로그는 티스토리 블로그
 
-# 해당 프로젝트의 repository폴더로 이동합니다.
-cd ./repository
+## 설치방법
 
-# 해당 프로젝트의 참조 repository입니다.
-git clone https://github.com/miniyus/AutomaticPosting-koapy.git
+## 사용법
 
-# anaconda 설치 후
-activate x86
+## 시스템 구성
 
-# koapy를 먼저 설치해야 의존성 에러가 나오지 않습니다.
-# 추 후 koapy설치 없이, git clone 만으로 설치가 가능하게 수정할 예정입니다.
-pip install koapy
+## 기능 명세서
 
-# 받은 repository에서
-cd ./repository/koapy
-
-# 수동으로 install
-# pip install koapy는 단지 의존성 해결을 위한 동작이며, 아래의 명령을 실행하지 않으면, 업종별 데이터를 불러올 수 없습니다.
-python setup.py install
-```
-
-# 사용법
-
-```bash
-# find by sector code
-main.py --sector {sector_code} --market {market_code}
-
-# find by theme code
-main.py --theme {theme_code}
-```
-
-## [change log](.changelog.md)
+## [changelog](./CHANGELOG.md)

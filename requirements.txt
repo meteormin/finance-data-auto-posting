@@ -1,0 +1,7 @@
+anaconda-client==1.7.2
+koapy>=0.6.1
+xmltodict>=0.12.0
+pyhocon >= 0.3.58
+beautifulsoup4 >= 4.9.3
+selenium >= 3.141.0
+bs4==0.0.1

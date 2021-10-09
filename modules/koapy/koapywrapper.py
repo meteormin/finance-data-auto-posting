@@ -1,11 +1,8 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
-import logging
 from modules.koapy.stockinfo import StockInfo
 from modules.koapy.basicinfo import BasicInfo
-
-logging.basicConfig(
-    format='%(asctime)s [%(levelname)s] %(message)s - %(filename)s:%(lineno)d',
-    level=logging.DEBUG)
+from modules.utils.customlogger import CustomLogger
+from typing import List
 
 
 class KoapyWrapper:
@@ -17,16 +14,18 @@ class KoapyWrapper:
 
     def __init__(self):
         self._koapy = KiwoomOpenApiPlusEntrypoint()
-        logging.info('Auto Login')
+        self._logger = CustomLogger.logger('automatic-posting', __name__)
+        self._logger.info('init: %s', __name__)
+        self._logger.info('Auto Login')
         self._koapy.EnsureConnected()
-        logging.info('Success Login')
+        self._logger.info('Success Login')
 
-    def getConnectState(self):
+    def get_connect_state(self):
         """can you check login
         Returns
             bool: maybe?
         """
-        logging.info('Check Login...')
+        self._logger.debug('Check Login...')
         return self._koapy.GetConnectState()
 
     def koapy(self):
@@ -36,14 +35,14 @@ class KoapyWrapper:
         """
         return self._koapy
 
-    def getCodeListByMarketAsList(self, marketCode: str):
+    def get_code_list_by_market_as_list(self, market_code: str):
         """get codes of stock by market code
         Args:
-            marketCode (str): market code 0: 'kospi' 1: 'kosdaq' etc...
+            market_code (str): market code 0: 'kospi' 1: 'kosdaq' etc...
         Returns:
             dict: {'names':[...],'codes':[...]}
         """
-        codes = self._koapy.GetCodeListByMarketAsList(marketCode)
+        codes = self._koapy.GetCodeListByMarketAsList(market_code)
         names = [self._koapy.getMasterCodeName(code) for code in codes]
 
         return {
@@ -51,19 +50,19 @@ class KoapyWrapper:
             'codes': codes
         }
 
-    def getStockBasicInfoAsDict(self, code: str):
+    def get_stock_basic_info_as_dict(self, code: str) -> BasicInfo:
         """get stock basic info
         Args:
             code (str): stock code
         Returns:
             dict: ... ref: 'koapy get stockinfo -h'
         """
-        basicDict = self._koapy.GetStockBasicInfoAsDict(code)
-        basicInfo = BasicInfo()
+        basic_dict = self._koapy.GetStockBasicInfoAsDict(code)
+        basic_info = BasicInfo()
 
-        return basicInfo.map(basicDict).to_dict()
+        return basic_info.map(basic_dict)
 
-    def getDailyStockDataAsDataFrame(self, code: str):
+    def get_daily_stock_data_as_data_frame(self, code: str):
         """ get daily stock data
         Args:
             code (str): stock code
@@ -73,52 +72,51 @@ class KoapyWrapper:
         """
         return self._koapy.GetDailyStockDataAsDataFrame(code)
 
-    def getThemeGroupListAsDict(self):
-        themeGroup = self._koapy.GetThemeGroupList(1)
-        return self.parseRawAsDictList(themeGroup)
+    def get_theme_group_list_as_dict(self):
+        theme_group = self._koapy.GetThemeGroupList(1)
+        return self.parse_raw_as_dict_list(theme_group)
 
-    def getThemeGroupCodeAsList(self, themeCode):
-        themeCodeList = self._koapy.GetThemeGroupCode(themeCode)
-        return themeCodeList.split(';')
+    def get_theme_group_code_as_list(self, theme_code):
+        theme_code_list = self._koapy.GetThemeGroupCode(theme_code)
+        return theme_code_list.split(';')
 
-    def parseRawAsDictList(self, raw):
+    @staticmethod
+    def parse_raw_as_dict_list(raw):
         ls = raw.split(';')
 
-        rsList = []
+        rs_list = []
         for i in ls:
             [code, name] = i.split('|')
 
-            rsDict = {}
-            rsDict['code'] = code
-            rsDict['name'] = name
-            rsList.append(rsDict)
+            rs_dict = {'code': code, 'name': name}
+            rs_list.append(rs_dict)
 
-        return rsList
+        return rs_list
 
-    def transactionCall(self, rqname: str, trcode: str, screenno: str, inputs):
+    def transaction_call(self, rqname: str, trcode: str, screenno: str, inputs):
         """call transaction(tr)
         Args:
             rqname (str): request name
             trcode (str): transaction code
             screenno (str): can input any 4digit numbers but don't input zero
-            inputs (str): input parameter ref 'koapy get trinfo -t {trcode}'
+            inputs (dict): input parameter ref 'koapy get trinfo -t {trcode}'
         Returns:
             I'm not sure
         """
         return self._koapy.TransactionCall(rqname, trcode, screenno, inputs)
 
-    def getStockInfoBySectorAsList(self, sector: str, marketCode='0'):
+    def get_stock_info_by_sector_as_list(self, sector: str, market_code='0') -> List[StockInfo]:
         """get stock info by sector using transaction call
         Args:
             sector (str): sector code
-            marketCode (str): market code, default='0'
+            market_code (str): market code, default='0'
         Returns:
             list: [<stockinfo>]
         """
         screenno = '2002'
 
         inputs = {
-            '시장구분': marketCode,
+            '시장구분': market_code,
             '업종코드': sector
         }
 
@@ -126,27 +124,25 @@ class KoapyWrapper:
         trcode = 'OPT20002'
 
         multi = []
-        for event in self.transactionCall(rqname, trcode, screenno, inputs):
-            names = event.single_data.names
-
+        for event in self.transaction_call(rqname, trcode, screenno, inputs):
             multi_names = event.multi_data.names
             multi_values = event.multi_data.values
 
-            stockinfo = StockInfo()
             for value in multi_values:
                 temp_dict = {}
-                for n, v in zip(names, value.values):
+                stock_info = StockInfo()
+                for n, v in zip(multi_names, value.values):
                     temp_dict[n] = v
-                multi.append(stockinfo.map(temp_dict).to_dict())
+                multi.append(stock_info.map(temp_dict))
 
         return multi
 
-    def getSectorInfoAsList(self, sector: str, marketCode='0'):
+    def get_sector_info_as_list(self, sector: str, market_code='0'):
 
         screenno = '2001'
 
         inputs = {
-            '시장구분': marketCode,
+            '시장구분': market_code,
             '업종코드': sector
         }
 
@@ -154,22 +150,21 @@ class KoapyWrapper:
         trcode = 'OPT20001'
 
         multi = []
-        for event in self.transactionCall(rqname, trcode, screenno, inputs):
+        for event in self.transaction_call(rqname, trcode, screenno, inputs):
             names = event.single_data.names
 
             multi_names = event.multi_data.names
             multi_values = event.multi_data.values
 
-            stockinfo = StockInfo()
             for value in multi_values:
                 temp_dict = {}
                 for n, v in zip(names, value.values):
                     temp_dict[n] = v
-                multi.append(stockinfo.map(temp_dict).to_dict())
+                multi.append(temp_dict)
 
         return multi
 
-    def getSectorList(self):
+    def get_sector_list(self):
 
         screenno = '2003'
 
@@ -181,13 +176,12 @@ class KoapyWrapper:
         trcode = 'OPT20003'
 
         multi = []
-        for event in self.transactionCall(rqname, trcode, screenno, inputs):
+        for event in self.transaction_call(rqname, trcode, screenno, inputs):
             names = event.single_data.names
 
             multi_names = event.multi_data.names
             multi_values = event.multi_data.values
 
-            stockinfo = StockInfo()
             for value in multi_values:
                 temp_dict = {}
                 for n, v in zip(names, value.values):

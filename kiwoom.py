@@ -1,5 +1,4 @@
 from modules.koapy.koapywrapper import KoapyWrapper
-from modules.client.client import Client
 import json
 import time
 import sys

@@ -1,2 +1,6 @@
 repository/
 *.xlsx
+__pycache__/
+CORPCODE.xml
+koapy.conf
+.idea

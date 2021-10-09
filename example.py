@@ -1,5 +1,5 @@
 from modules.koapy.koapywrapper import KoapyWrapper
-from modules.client.client import Client
+
 import json
 
 # connect my lumen server

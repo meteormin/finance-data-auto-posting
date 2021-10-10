@@ -8,3 +8,4 @@ MODULE_PATH = os.path.join(ROOT_DIR, 'modules')
 
 LOG_PATH = os.path.join(ROOT_DIR, 'logs')
 
+RESOURCE_PATH = os.path.join(ROOT_DIR, 'resources')

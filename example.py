@@ -1,4 +1,4 @@
-from modules.koapy.koapywrapper import KoapyWrapper
+from src.koapy.koapywrapper import KoapyWrapper
 
 import json
 

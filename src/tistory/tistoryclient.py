@@ -2,18 +2,18 @@ import selenium.common.exceptions
 import time
 import requests
 from typing import Union, Dict
-from modules.client.client import Client
-from modules.utils.util import make_url
+from src.utils.util import make_url, get_query_str_dict
 from selenium import webdriver
 from dataclasses import dataclass
-from definitions import CONFIG_PATH
+from definitions import CONFIG_PATH, ROOT_DIR
 from configparser import ConfigParser, SectionProxy
-from modules.utils.customlogger import CustomLogger
-from modules.contracts.blogclient import BlogClient, BlogPost
+from src.utils.customlogger import CustomLogger
+from src.contracts.blogclient import BlogClient, BlogPost, BlogPostData, BlogEndPoint, BlogResource, BlogLogin, \
+    BlogLoginInfo
 
 
 @dataclass(frozen=True)
-class LoginInfo:
+class LoginInfo(BlogLoginInfo):
     client_id: str
     client_secret: str
     redirect_uri: str
@@ -33,7 +33,7 @@ class AccessTokenRequest:
 
 
 @dataclass(frozen=False)
-class PostData:
+class PostData(BlogPostData):
     title: str
     content: str
     published: str
@@ -45,16 +45,38 @@ class PostData:
     acceptComment: int = 1
 
 
-class TistoryLogin(Client):
+class TistoryLogin(BlogEndPoint, BlogLogin):
+    _end_point = '/oauth'
 
     def __init__(self, host: str, config: SectionProxy):
         super().__init__(host)
         self._config = config
         self._logger = CustomLogger.logger('automatic-posting', __name__)
 
-    def access_token(self, req: AccessTokenRequest):
+    def login(self, login_info: LoginInfo):
+        res = self._authorize(login_info)
+
+        if 'code' in res:
+            self._logger.info('code: ' + res['code'])
+            req = AccessTokenRequest(
+                client_id=login_info.client_id,
+                client_secret=login_info.client_secret,
+                redirect_uri=login_info.redirect_uri,
+                code=res['code']
+            )
+            token = self._access_token(req)
+        else:
+            self._logger.warning('fail issue token')
+            return None
+
+        [name, token] = token.split('=')
+        self._logger.debug(name + ': ' + token)
+
+        return {name: token}
+
+    def _access_token(self, req: AccessTokenRequest):
         self._logger.info('request access_token')
-        method = '/oauth/access_token'
+        method = self._end_point + '/access_token'
         url = make_url(self.get_host(), method, {
             'client_id': req.client_id,
             'client_secret': req.client_secret,
@@ -67,13 +89,15 @@ class TistoryLogin(Client):
 
         return self._set_response(requests.get(url))
 
-    def authorize(self, login_info: LoginInfo):
+    def _authorize(self, login_info: LoginInfo):
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
-        web_driver = webdriver.Chrome(self._config['driver_name'], chrome_options=options)
+        # options.add_argument('--headless')
+
+        web_driver = webdriver.Chrome(executable_path=ROOT_DIR + '\\' + self._config['driver_name'],
+                                      chrome_options=options)
 
         url = self.get_host()
-        method = '/oauth/authorize'
+        method = self._end_point + '/authorize'
         url = make_url(url, method, {
             'client_id': login_info.client_id,
             'redirect_uri': login_info.redirect_uri,
@@ -87,14 +111,15 @@ class TistoryLogin(Client):
             element.click()
             url = web_driver.current_url
         except selenium.common.exceptions.NoSuchElementException as e:
-            self._logger.warning(e.stacktrace)
+            self._logger.warning('No Such Element 1: confirm_btn')
+            self._logger.warning(e.msg)
 
         try:
-            web_driver.find_element_by_css_selector(self._config['kakao_login_link'])
+            web_driver.find_element_by_css_selector(self._config['kakao_login_link']).click()
             self._logger.info('redirect kakao login: ' + web_driver.current_url)
         except selenium.common.exceptions.NoSuchElementException as e:
             self._logger.warning('fail redirect kakao login: ' + web_driver.current_url)
-
+            self._logger.warning(e.msg)
         try:
             web_driver.get(web_driver.current_url)
             self._logger.info('request: ' + web_driver.current_url)
@@ -103,20 +128,26 @@ class TistoryLogin(Client):
 
         self._logger.info('sleep 3s')
         time.sleep(3)
+        try:
+            web_driver.find_element_by_css_selector(self._config['kakao_email_input']) \
+                .send_keys(login_info.kakao_id)
+            self._logger.info('input email')
 
-        web_driver.find_element_by_css_selector(self._config['kakao_email_input']).send_keys(login_info.kakao_id)
-        self._logger.info('input email')
+            time.sleep(1)
 
-        web_driver.find_element_by_css_selector(self._config['kakao_pass_input']).send_keys(login_info.kakao_password)
-        self._logger.info('input password')
+            web_driver.find_element_by_css_selector(self._config['kakao_pass_input']) \
+                .send_keys(login_info.kakao_password)
+            self._logger.info('input password')
 
-        web_driver.find_element_by_css_selector(self._config['kakao_login_submit']).click()
-        self._logger.info('submit login form')
-        self._logger.info('sleep 3s')
-        time.sleep(3)
+            web_driver.find_element_by_css_selector(self._config['kakao_login_submit']).click()
+            self._logger.info('submit login form')
+            self._logger.info('sleep 3s')
+            time.sleep(3)
+        except selenium.common.exceptions.NoSuchElementException as e:
+            self._logger.warning(e.msg)
 
         try:
-            web_driver.find_element_by_css_selector('confirm_btn').click()
+            web_driver.find_element_by_css_selector(self._config['confirm_btn']).click()
             self._logger.info('success login: ' + web_driver.current_url)
         except selenium.common.exceptions.NoSuchElementException as e:
             self._logger.warning('fail login: ' + web_driver.current_url)
@@ -125,18 +156,20 @@ class TistoryLogin(Client):
         web_driver.close()
         self._logger.info('close webdriver')
 
-        return self._set_response(requests.get(url))
+        return get_query_str_dict(url)
 
 
-class Post(Client, BlogPost):
+class Post(BlogPost):
+    _resource: str = '/post'
 
     def __init__(self, host: str, token: str, blog_name: str):
         super().__init__(host=host)
         self.access_token = token
         self.blog_name = blog_name
+        self._logger = CustomLogger.logger('automatic-posting', 'Post')
 
     def list(self, page: int = 1):
-        method = '/list'
+        method = self._resource + '/list'
         url = make_url(self.get_host(), method, {
             'access_token': self.access_token,
             'blogName': self.blog_name,
@@ -144,10 +177,11 @@ class Post(Client, BlogPost):
             'page': page
         })
 
-        self._set_response(requests.get(url))
+        self._logger.debug(url)
+        return self._set_response(requests.get(url))
 
     def read(self, post_id: int):
-        method = '/read'
+        method = self._resource + '/read'
         url = make_url(self.get_host(), method, {
             'access_token': self.access_token,
             'blogName': self.blog_name,
@@ -155,8 +189,8 @@ class Post(Client, BlogPost):
         })
         return self._set_response(requests.get(url))
 
-    def write(self, post: PostData):
-        method = '/write'
+    def write(self, post: BlogPostData):
+        method = self._resource + '/write'
         post_data = post.__dict__
         post_data.update({
             'access_token': self.access_token,
@@ -168,11 +202,11 @@ class Post(Client, BlogPost):
 
         return self._set_response(requests.post(url))
 
-    def modify(self, obj: object):
+    def modify(self, obj: BlogPostData):
         pass
 
     def attach(self, filename: str, contents: str):
-        method = '/attach'
+        method = self._resource + '/attach'
         files = {filename: contents}
         url = make_url(self.get_host(), method, {
             'access_token': self.access_token,
@@ -181,20 +215,31 @@ class Post(Client, BlogPost):
         return self._set_response(requests.post(url, files=files))
 
 
-class Apis(Client):
+class Apis(BlogEndPoint):
+    _end_point = '/apis'
+    _classes = {
+        'post': Post
+    }
 
-    def __init__(self, host: str, token: str, blog_name: str):
-        super().__init__(host=host)
-        self.access_token = token
-        self.blog_name = blog_name
+    def set_post(self, post_api: Post):
+        self.set_resource(post_api.__class__, post_api)
+        return self
 
-    def post(self) -> BlogPost:
-        return Post(self.get_host(), self.access_token, self.blog_name)
+    def post(self) -> Post:
+        return self.get_resource(self._classes['post'])
 
 
-class TistoryClient(Client, BlogClient):
+class TistoryClient(BlogClient):
     blog_name: str = None
     access_token: str = None
+
+    # 의존성 바인딩
+    # 정의된 클래스가 아니면 가져올 수 없다.
+    # 해당 프로퍼티를 수정하여 다형성을 만족시킬 수 있다.
+    _classes: Dict[str, type] = {
+        'login': TistoryLogin,
+        'apis': Apis
+    }
 
     def __init__(self, host: str):
         super().__init__(host=host)
@@ -203,31 +248,20 @@ class TistoryClient(Client, BlogClient):
         self._logger = CustomLogger.logger('automatic-posting', __name__)
         self.blog_name = self._config['api']['blog_name']
 
+    def set_login(self, login: TistoryLogin):
+        return self.set_end_point(login.__class__, login)
+
     def login(self, login_info: LoginInfo) -> Union[Dict[str, str], None]:
-        login = TistoryLogin(self.get_host(), self._config['webdriver'])
-        res = login.authorize(login_info)
+        login = self.get_end_point(self._classes['login'])
+        if isinstance(login, BlogLogin):
+            token = login.login(login_info)
+            if 'access_token' in token:
+                self.access_token = token['access_token']
+                return token
+        return None
 
-        if 'code' in res:
-            self._logger.info('code: ' + res['code'])
-            req = AccessTokenRequest(
-                client_id=login_info.client_id,
-                client_secret=login_info.client_secret,
-                redirect_uri=login_info.redirect_uri,
-                code=res['code']
-            )
-            token = login.access_token(req)
-        else:
-            self._logger.warning('fail issue token')
-            return None
+    def set_apis(self, apis: Apis):
+        return self.set_end_point(apis.__class__, apis)
 
-        [name, token] = token.split('=')
-        self._logger.debug(name + ': ' + token)
-
-        self.access_token = token
-
-        return {name: token}
-
-    def apis(self) -> Union[Apis, None]:
-        if self.access_token is None:
-            return None
-        return Apis(self.get_host(), self.access_token, self.blog_name)
+    def apis(self) -> Apis:
+        return self.get_end_point(self._classes['apis'])

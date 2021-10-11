@@ -1,7 +1,5 @@
 import dataclasses
 
-from modules.utils.string import Str
-
 
 @dataclasses.dataclass
 class BasicInfo:

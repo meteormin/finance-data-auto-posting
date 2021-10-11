@@ -1,12 +1,12 @@
 from os.path import exists
-from modules.koapy.koapywrapper import KoapyWrapper
+from src.koapy.koapywrapper import KoapyWrapper
 from definitions import CONFIG_PATH
 from configparser import ConfigParser
 from pyhocon import ConfigFactory, HOCONConverter
 import subprocess
-from modules.utils.customlogger import CustomLogger
+from src.utils.customlogger import CustomLogger
 from typing import List
-from modules.koapy.basicinfo import BasicInfo
+from src.koapy.basicinfo import BasicInfo
 
 
 class KoapyService:

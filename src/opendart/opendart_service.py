@@ -1,12 +1,12 @@
-from modules.opendart.opendart_client import OpenDartClient
+from src.opendart.opendart_client import OpenDartClient
 from configparser import ConfigParser
 from definitions import CONFIG_PATH
-from modules.opendart.opendart_data import *
-from modules.opendart.report_code import ReportCode
+from src.opendart.opendart_data import *
+from src.opendart.report_code import ReportCode
 import xmltodict
 import os
 from typing import List, Dict, Union
-from modules.utils.customlogger import CustomLogger
+from src.utils.customlogger import CustomLogger
 
 
 class OpenDartService:

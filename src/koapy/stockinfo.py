@@ -1,4 +1,4 @@
-from modules.utils.string import Str
+from src.utils.string import Str
 from dataclasses import dataclass
 
 

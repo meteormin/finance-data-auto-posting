@@ -4,7 +4,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 CONFIG_PATH = os.path.join(ROOT_DIR, 'config')
 
-MODULE_PATH = os.path.join(ROOT_DIR, 'modules')
+MODULE_PATH = os.path.join(ROOT_DIR, 'src')
 
 LOG_PATH = os.path.join(ROOT_DIR, 'logs')
 

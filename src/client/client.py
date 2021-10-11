@@ -38,3 +38,7 @@ class Client:
 
     def get_host(self) -> str:
         return self._host
+
+    def set_host(self, host: str):
+        self._host = host
+        return self

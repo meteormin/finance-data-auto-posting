@@ -1,7 +1,7 @@
 import json
 import logging
 import logging.config
-from modules.utils.loggeradapter import LoggerAdapter
+from src.utils.loggeradapter import LoggerAdapter
 from definitions import CONFIG_PATH
 
 

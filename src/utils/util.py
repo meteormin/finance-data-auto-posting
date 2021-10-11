@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 
 
 def snake(s: str):
@@ -29,3 +30,15 @@ def make_url(host, method: str, parameters: dict):
         count += 1
 
     return url + query_str
+
+
+def get_query_str_dict(url: str) -> Dict[str, str]:
+    parameters = url.split('?')[1]
+    parameters = parameters.split('&')
+
+    rs_dict = {}
+    for param in parameters:
+        [key, value] = param.split('=')
+        rs_dict[key] = value
+
+    return rs_dict

@@ -1,9 +1,9 @@
 import dataclasses
 from typing import List, Dict
-from modules.koapy.basicinfo import BasicInfo
-from modules.opendart.opendart_data import Acnt
-from modules.utils.customlogger import CustomLogger
-from modules.opendart.opendart_service import OpenDartService
+from src.koapy.basicinfo import BasicInfo
+from src.opendart.opendart_data import Acnt
+from src.utils.customlogger import CustomLogger
+from src.opendart.opendart_service import OpenDartService
 
 
 @dataclasses.dataclass

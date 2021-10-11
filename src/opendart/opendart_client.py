@@ -1,4 +1,4 @@
-from modules.client.client import Client
+from src.client.client import Client
 import requests
 import zipfile
 import io

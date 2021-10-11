@@ -1,9 +1,9 @@
-from src.client.client import Client
 import requests
 import zipfile
 import io
 import xmltodict
-from typing import Dict, List, Union
+from src.client.client import Client
+from typing import Dict, Union
 
 
 class OpenDartClient(Client):

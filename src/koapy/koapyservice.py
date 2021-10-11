@@ -1,7 +1,7 @@
+import subprocess
 from os.path import exists
 from src.koapy.koapywrapper import KoapyWrapper
 from pyhocon import ConfigFactory, HOCONConverter
-import subprocess
 from src.utils.customlogger import CustomLogger
 from typing import List
 from src.koapy.basicinfo import BasicInfo

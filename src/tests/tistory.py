@@ -2,7 +2,7 @@ from src.tests.testable import Testable
 
 
 class Tistory(Testable):
-    TAG: str = 'test: tistory'
+    TAG: str = 'test-tistory'
 
     def __init__(self):
         super().__init__()

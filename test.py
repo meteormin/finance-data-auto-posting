@@ -7,18 +7,21 @@ from src.tests.testable import Testable
 
 
 @click.command()
-@click.option('--test', type=click.STRING, required=True, help='executable test python script')
-def main(test):
-    if exists('src/tests/' + test + '.py'):
+@click.argument('name', type=click.STRING, required=True, )
+@click.option('--save/--no-save ', '-s/-ns', type=click.BOOL, required=False, default=False,
+              help='save test result as json')
+def main(name, save):
+    """ NAME: test file name """
+    if exists('src/tests/' + name + '.py'):
         package = importlib.import_module('src.tests')
-        module = importlib.import_module('src.tests.' + test)
-        test_class = getattr(module, test.title())()
+        module = importlib.import_module('src.tests.' + name)
+        test_class = getattr(module, name.title())(save)
         if isinstance(test_class, Testable):
             test_class.run()
         else:
-            print('class: {0} not exists'.format(test))
+            print('class: {0} not exists'.format(name))
     else:
-        print('test: {0} not exists'.format(test))
+        print('{0} is not exists'.format(name))
 
 
 if __name__ == '__main__':

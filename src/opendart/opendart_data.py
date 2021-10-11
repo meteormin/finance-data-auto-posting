@@ -1,8 +1,10 @@
+import json
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
+from src.utils.data import BaseData
 
 
-class Data:
+class Data(BaseData):
     def map(self, data: dict):
         attrs = self.__dict__
         for k, v in data.items():
@@ -63,3 +65,33 @@ class Acnt(Data):
 
     def map_list(self, data_list) -> List[__name__]:
         return super().map_list(data_list)
+
+
+class AcntCollection(Data):
+    _items: List[Acnt]
+
+    def __init__(self, acnt_list: List[Acnt]):
+        self._items = acnt_list
+
+    def get(self, key: int):
+        return self._items[key]
+
+    def all(self):
+        return self._items
+
+    def get_by_account_nm(self, account_nm: str, fs_div: str = 'CFS') -> Acnt:
+        for item in self._items:
+            if fs_div == item.fs_div:
+                if account_nm == item.account_nm:
+                    return item
+
+    def to_json(self):
+        json_list = []
+        for item in self._items:
+            json_list.append(item.__dict__)
+
+        return json.dumps(json_list, indent=4, ensure_ascii=False, sort_keys=True)
+
+    def map(self, data: List[Acnt]):
+        self._items = data
+        return self

@@ -1,4 +1,5 @@
 import re
+import json
 from typing import Dict
 from configparser import ConfigParser
 from definitions import CONFIG_PATH
@@ -50,3 +51,7 @@ def config_ini(name: str) -> ConfigParser:
     config_parser = ConfigParser()
     config_parser.read(CONFIG_PATH + '/{filename}.ini'.format(filename=name))
     return config_parser
+
+
+def object_to_json(obj: object):
+    return json.dumps(obj, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)

@@ -4,6 +4,7 @@ import io
 import xmltodict
 from src.client.client import Client
 from typing import Dict, Union
+from src.utils.util import make_url
 
 
 class OpenDartClient(Client):
@@ -14,8 +15,8 @@ class OpenDartClient(Client):
 
     def get_corp_codes(self) -> Union[Dict[str, str], None]:
         end_point = '/api/corpCode.xml'
-        url = self.get_host() + end_point
-        self._response = requests.get(url, params={'crtfc_key': self._api_key})
+        url = make_url(host=self.get_host(), method=end_point, parameters={'crtfc_key': self._api_key})
+        self._response = requests.get(url)
         res = self._response.content
         if res is not None:
             with zipfile.ZipFile(io.BytesIO(res)) as zip_ref:
@@ -28,27 +29,28 @@ class OpenDartClient(Client):
 
     def get_single(self, corp_code: str, year: str, report_code: str):
         end_point = '/api/fnlttSinglAcnt.json'
-        url = self.get_host() + end_point
-
-        res = requests.get(url, params={
+        url = make_url(self.get_host(), end_point, {
             'crtfc_key': self._api_key,
             'corp_code': corp_code,
             'bsns_year': year,
             'reprt_code': report_code
         })
+        print(url)
+        res = requests.get(url)
 
         return self._set_response(res)
 
     def get_multi(self, corp_codes: list, year: str, report_code: str):
         end_point = '/api/fnlttMultiAcnt.json'
-        url = self.get_host() + end_point
-
         corp_codes = ','.join(corp_codes)
-        res = requests.get(url, params={
+
+        url = make_url(self.get_host(), end_point, {
             'crtfc_key': self._api_key,
             'corp_code': corp_codes,
             'bsns_year': year,
             'reprt_code': report_code
         })
+
+        res = requests.get(url)
 
         return self._set_response(res)

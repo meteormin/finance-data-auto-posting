@@ -20,6 +20,9 @@ class KoapyWrapper:
         self._koapy.EnsureConnected()
         self._logger.info('Success Login')
 
+    def connect(self):
+        self._koapy.EnsureConnected()
+
     def get_connect_state(self):
         """can you check login
         Returns

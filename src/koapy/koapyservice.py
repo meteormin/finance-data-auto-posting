@@ -3,12 +3,17 @@ from os.path import exists
 from src.koapy.koapywrapper import KoapyWrapper
 from pyhocon import ConfigFactory, HOCONConverter
 from src.utils.customlogger import CustomLogger
+from src.utils.loggeradapter import LoggerAdapter
 from typing import List
 from src.koapy.basicinfo import BasicInfo
 from src.utils.util import config_ini
+from definitions import MODULE_PATH
+import traceback
 
 
 class KoapyService:
+    _logger: LoggerAdapter
+    _koapy_wrapper: KoapyWrapper = None
 
     def __init__(self, _id: str = None, password: str = None):
         self._logger = CustomLogger.logger('automatic-posting', __name__)
@@ -18,7 +23,7 @@ class KoapyService:
             _id = config['account']['id']
             password = config['account']['password']
 
-        conf = ConfigFactory.parse_file('modules/koapy/config.conf')
+        conf = ConfigFactory.parse_file(MODULE_PATH + '/koapy/config.conf')
         current_id = conf.get('koapy.backend.kiwoom_open_api_plus.credential.user_id')
         if exists('./koapy.conf'):
             current_id = ConfigFactory.parse_file('./koapy.conf').get(
@@ -32,11 +37,12 @@ class KoapyService:
 
             with open('./koapy.conf', 'w+') as f:
                 f.write(new)
-            conda = subprocess.run(['conda', 'activate', 'x86'])
-            self._logger.debug(conda.stdout)
 
-            koapy = subprocess.run(['koapy', 'update', 'openapi'])
-            self._logger.debug(koapy.stdout)
+        conda = subprocess.run(['conda.bat', 'activate', 'x86'])
+        self._logger.debug(conda.stdout)
+
+        koapy = subprocess.run(['koapy', 'update', 'openapi'])
+        self._logger.debug(koapy.stdout)
 
         self._koapy_wrapper = KoapyWrapper()
         self._logger.info('init:' + __name__)
@@ -52,3 +58,6 @@ class KoapyService:
             rs_list.append(basic)
 
         return rs_list
+
+    def get_stock(self, stock_code):
+        return self._koapy_wrapper.get_stock_basic_info_as_dict(stock_code)

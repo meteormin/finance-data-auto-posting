@@ -12,10 +12,10 @@ class OpenDartService:
     """
     Open Dart Api
     """
-    Q1: str = ReportCode.Q1
-    Q2: str = ReportCode.Q2
-    Q3: str = ReportCode.Q3
-    Q4: str = ReportCode.Q4
+    Q1: ReportCode.Q1 = ReportCode.Q1
+    Q2: ReportCode.Q2 = ReportCode.Q2
+    Q3: ReportCode.Q3 = ReportCode.Q3
+    Q4: ReportCode.Q4 = ReportCode.Q4
     QUARTERS: dict = ReportCode.__members__
 
     def __init__(self, url: str = None, api_key: str = None):

@@ -4,6 +4,7 @@ from src.koapy.basicinfo import BasicInfo
 from src.opendart.opendart_data import Acnt
 from src.utils.customlogger import CustomLogger
 from src.opendart.opendart_service import OpenDartService
+from src.opendart.opendart_data import AcntCollection
 
 
 @dataclasses.dataclass
@@ -32,24 +33,21 @@ class FinanceData:
             }
         }
 
-    def map(self, acnt: List[Acnt]) -> __name__:
+    def map(self, acnt: AcntCollection) -> __name__:
         """
 
         :param acnt: List[Acnt]
         :return FinanceData:
         """
-        for account in acnt:
-            self.date = account.thstrm_dt
-            self.reprt_code = account.reprt_code
+        for key, name in self.get_map_table()['account_nm'].items():
+            account = acnt.get_by_account_nm(key)
+            if account.account_nm == name:
+                self.__setattr__(key, int(account.thstrm_amount))
 
-            for key, name in self.get_map_table()['account_nm'].items():
-                if account.fs_div == 'CFS':
-                    if account.account_nm == name:
-                        self.__setattr__(key, int(account.thstrm_amount))
-                    if account.account_nm == '당기순이익':
-                        od_service = OpenDartService()
-                        corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
-                        self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
+            if account.account_nm == '당기순이익':
+                od_service = OpenDartService()
+                corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
+                self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
 
             self._calculate_flow_rate()
             self._calculate_debt_rate()
@@ -81,7 +79,9 @@ class Refine:
     def refine(self, basic_info: List[BasicInfo], acnt: Dict[str, List[Acnt]]) -> List[RefineData]:
         self._basic_info = basic_info
         self._acnt = acnt
+
         for stock in basic_info:
+            acnt_collect = AcntCollection(acnt[stock.code])
             self._refine_data.append(self.refine_single(stock, acnt[stock.code]))
         return self.get_refined_data()
 

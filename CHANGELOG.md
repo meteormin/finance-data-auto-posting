@@ -18,6 +18,8 @@
 - 기존 'modules' 패키지 'src'(으)로 변경
 - customlogger
     - logs 및 logs/tests 폴더 없을 경우 생성 하게 수정
+- opdart
+    - Acnt 리스트 다루기 쉽게 AcntCollection 클래스 생성
 
 **fix**
 

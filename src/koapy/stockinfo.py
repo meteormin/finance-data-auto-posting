@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+from src.utils.data import BaseData
 
 
 @dataclass
-class StockInfo:
+class StockInfo(BaseData):
     code: str = None
     name: str = None
     current_price: str = None

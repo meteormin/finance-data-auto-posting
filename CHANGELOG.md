@@ -20,6 +20,8 @@
     - logs 및 logs/tests 폴더 없을 경우 생성 하게 수정
 - opdart
     - Acnt 리스트 다루기 쉽게 AcntCollection 클래스 생성
+- Refine
+  - refine 모듈 구현, 데이터 정확도 체크 필요
 
 **fix**
 

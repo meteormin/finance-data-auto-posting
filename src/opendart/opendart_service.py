@@ -61,9 +61,9 @@ class OpenDartService:
             if stock_code == corp_code.stock_code:
                 return corp_code
 
-    def get_single(self, corp_code: str, year: str, report_code: str) -> Union[Dict[str, List[Acnt]], None]:
+    def get_single(self, corp_code: str, year: str, report_code: ReportCode) -> Union[Dict[str, AcntCollection], None]:
         self._logger.debug('request get single corp accounts')
-        single_acnt = self._client.get_single(corp_code, year, report_code)
+        single_acnt = self._client.get_single(corp_code, year, report_code.value)
         if self._client.is_success():
             self._logger.debug('success request')
         else:
@@ -76,9 +76,9 @@ class OpenDartService:
 
         return single
 
-    def get_multi(self, corp_codes: list, year: str, report_code: str) -> Dict[str, List[Acnt]]:
+    def get_multi(self, corp_codes: list, year: str, report_code: ReportCode) -> Dict[str, List[Acnt]]:
         self._logger.debug('request get multiple corp accounts')
-        multi_acnt = self._client.get_multi(corp_codes, year, report_code)
+        multi_acnt = self._client.get_multi(corp_codes, year, report_code.value)
         if self._client.is_success():
             self._logger.debug('success request')
         else:
@@ -94,23 +94,24 @@ class OpenDartService:
     def get_deficit_count(self, corp_code, year: str, count: int = 3):
         deficit_count = 0
         for i in range(count):
-            for q in self.QUARTERS:
-                acnt = self.get_single(corp_code, str(int(year) - i), q.value)
-                for acnt_list in acnt.values():
-                    for account in acnt_list:
-                        if account.account_nm == '당기순이익':
+            for q in self.QUARTERS.values():
+                acnt = self.get_single(corp_code, str(int(year) - i), q)
+                if acnt is not None:
+                    for acnt_collect in acnt.values():
+                        account = acnt_collect.get_by_account_nm('당기순이익')
+                        if account is not None:
                             if account.thstrm_amount is not None:
                                 if int(account.thstrm_amount) < 0:
                                     deficit_count += 1
         return deficit_count
 
     @staticmethod
-    def _div_by_stock(multi_acnt: List[Acnt]) -> Dict[str, List[Acnt]]:
+    def _div_by_stock(multi_acnt: List[Acnt]) -> Dict[str, AcntCollection]:
         rs_dict = {}
         for acnt in multi_acnt:
             if acnt.stock_code:
                 if acnt.stock_code not in rs_dict:
-                    rs_dict[acnt.stock_code] = []
-                rs_dict[acnt.stock_code].append(acnt)
+                    rs_dict[acnt.stock_code] = AcntCollection()
+                rs_dict[acnt.stock_code].push(acnt)
 
         return rs_dict

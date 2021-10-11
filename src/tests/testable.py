@@ -54,11 +54,13 @@ class Testable(ABC):
         self.__console('ERROR', msg)
 
     def _save_json_file(self, result):
-        with open('test' + '_' + self.TAG + '.json', 'w+') as f:
+        with open('test' + '_' + self.TAG + '.json', 'w+', encoding='utf-8') as f:
             if isinstance(result, str):
                 f.write(result)
+            elif isinstance(result, Jsonable):
+                f.write(result.to_json())
             else:
-                f.write(json.dumps(result, ensure_ascii=False, indent=4, sort_keys=True))
+                f.write(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
 
     @abstractmethod
     def handle(self):

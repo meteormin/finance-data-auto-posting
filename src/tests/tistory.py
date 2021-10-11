@@ -4,9 +4,6 @@ from src.tests.testable import Testable
 class Tistory(Testable):
     TAG: str = 'test-tistory'
 
-    def __init__(self):
-        super().__init__()
-
     def handle(self):
         login = self._login()
         _list = self._list(login['access_token'])

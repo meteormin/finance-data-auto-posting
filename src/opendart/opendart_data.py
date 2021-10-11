@@ -70,8 +70,22 @@ class Acnt(Data):
 class AcntCollection(Data):
     _items: List[Acnt]
 
-    def __init__(self, acnt_list: List[Acnt]):
+    def __init__(self, acnt_list: List[Acnt] = []):
         self._items = acnt_list
+
+    def push(self, acnt: Acnt):
+        self._items.append(acnt)
+        return self
+
+    def pop(self):
+        self._items.pop()
+        return self
+
+    def first(self):
+        return self.get(0)
+
+    def last(self):
+        return self.get(len(self._items) - 1)
 
     def get(self, key: int):
         return self._items[key]
@@ -90,7 +104,7 @@ class AcntCollection(Data):
         for item in self._items:
             json_list.append(item.__dict__)
 
-        return json.dumps(json_list, indent=4, ensure_ascii=False, sort_keys=True)
+        return json.dumps(json_list, indent=2, ensure_ascii=False, sort_keys=True)
 
     def map(self, data: List[Acnt]):
         self._items = data

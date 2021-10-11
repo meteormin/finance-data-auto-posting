@@ -4,6 +4,7 @@ import click
 from os.path import exists
 import importlib
 from src.tests.testable import Testable
+from src.utils.util import camel
 
 
 @click.command()
@@ -12,10 +13,12 @@ from src.tests.testable import Testable
               help='save test result as json')
 def main(name, save):
     """ NAME: test file name """
+    click.echo('NAME: ' + name)
+    click.echo('CLASS: ' + camel(name))
     if exists('src/tests/' + name + '.py'):
         package = importlib.import_module('src.tests')
         module = importlib.import_module('src.tests.' + name)
-        test_class = getattr(module, name.title())(save)
+        test_class = getattr(module, camel(name))(save)
         if isinstance(test_class, Testable):
             test_class.run()
         else:

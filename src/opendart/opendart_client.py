@@ -35,10 +35,8 @@ class OpenDartClient(Client):
             'bsns_year': year,
             'reprt_code': report_code
         })
-        print(url)
-        res = requests.get(url)
 
-        return self._set_response(res)
+        return self._set_response(requests.get(url))
 
     def get_multi(self, corp_codes: list, year: str, report_code: str):
         end_point = '/api/fnlttMultiAcnt.json'
@@ -51,6 +49,4 @@ class OpenDartClient(Client):
             'reprt_code': report_code
         })
 
-        res = requests.get(url)
-
-        return self._set_response(res)
+        return self._set_response(requests.get(url))

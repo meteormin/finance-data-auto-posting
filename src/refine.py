@@ -5,10 +5,11 @@ from src.opendart.opendart_data import Acnt
 from src.utils.customlogger import CustomLogger
 from src.opendart.opendart_service import OpenDartService
 from src.opendart.opendart_data import AcntCollection
+from src.utils.data import BaseData
 
 
 @dataclasses.dataclass
-class FinanceData:
+class FinanceData(BaseData):
     date: str = None
     reprt_code: str = None
     current_assets: int = 0
@@ -40,14 +41,17 @@ class FinanceData:
         :return FinanceData:
         """
         for key, name in self.get_map_table()['account_nm'].items():
-            account = acnt.get_by_account_nm(key)
-            if account.account_nm == name:
-                self.__setattr__(key, int(account.thstrm_amount))
+            account = acnt.get_by_account_nm(name)
+            if account is not None:
+                self.date = account.thstrm_dt
+                self.reprt_code = account.reprt_code
+                self.__setattr__(key, int(account.thstrm_amount.replace(',', '')))
 
-            if account.account_nm == '당기순이익':
-                od_service = OpenDartService()
-                corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
-                self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
+                if account.account_nm == '당기순이익':
+                    od_service = OpenDartService()
+                    corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
+
+                    self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
 
             self._calculate_flow_rate()
             self._calculate_debt_rate()
@@ -55,14 +59,20 @@ class FinanceData:
         return self
 
     def _calculate_flow_rate(self):
+        if self.floating_debt == 0:
+            self.flow_rate = 0
+            return
         self.flow_rate = int(self.current_assets / self.floating_debt * 100)
 
     def _calculate_debt_rate(self):
+        if self.total_assets == 0:
+            self.flow_rate = 0
+            return
         self.debt_rate = int(self.total_debt / self.total_assets * 100)
 
 
 @dataclasses.dataclass
-class RefineData:
+class RefineData(BaseData):
     basic_info: BasicInfo = None
     finance_data: FinanceData = None
 
@@ -73,20 +83,19 @@ class Refine:
         self._basic_info = []
         self._acnt = []
         self._refine_data = []
-        self._logger = CustomLogger.logger('automatic-posting', self.__name__)
-        self._logger.info('init: %s', self.__name__)
+        self._logger = CustomLogger.logger('automatic-posting', __name__)
+        self._logger.info('init: %s', __name__)
 
-    def refine(self, basic_info: List[BasicInfo], acnt: Dict[str, List[Acnt]]) -> List[RefineData]:
+    def refine(self, basic_info: List[BasicInfo], acnt: Dict[str, AcntCollection]) -> List[RefineData]:
         self._basic_info = basic_info
         self._acnt = acnt
 
         for stock in basic_info:
-            acnt_collect = AcntCollection(acnt[stock.code])
             self._refine_data.append(self.refine_single(stock, acnt[stock.code]))
         return self.get_refined_data()
 
     @staticmethod
-    def refine_single(basic_info: BasicInfo, acnt: List[Acnt]) -> RefineData:
+    def refine_single(basic_info: BasicInfo, acnt: AcntCollection) -> RefineData:
         refine_data = RefineData()
 
         refine_data.basic_info = basic_info

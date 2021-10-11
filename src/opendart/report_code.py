@@ -8,6 +8,12 @@ class ReportCode(Enum):
     Q4: str = '11011'
 
     @classmethod
+    def get_by_str(cls, q: str):
+        for k, v in cls.__members__.items():
+            if q == v.value:
+                return v
+
+    @classmethod
     def sub(cls, quarter: str, sub_num: int):
         has_attr = False
         for q in cls.__members__.values():

@@ -1,12 +1,11 @@
 from os.path import exists
 from src.koapy.koapywrapper import KoapyWrapper
-from definitions import CONFIG_PATH
-from configparser import ConfigParser
 from pyhocon import ConfigFactory, HOCONConverter
 import subprocess
 from src.utils.customlogger import CustomLogger
 from typing import List
 from src.koapy.basicinfo import BasicInfo
+from src.utils.util import config_ini
 
 
 class KoapyService:
@@ -15,8 +14,7 @@ class KoapyService:
         self._logger = CustomLogger.logger('automatic-posting', __name__)
 
         if _id is None or password is None:
-            config = ConfigParser()
-            config.read(CONFIG_PATH + '/koapy.ini')
+            config = config_ini('koapy')
             _id = config['account']['id']
             password = config['account']['password']
 

@@ -1,5 +1,7 @@
 import re
 from typing import Dict
+from configparser import ConfigParser
+from definitions import CONFIG_PATH
 
 
 def snake(s: str):
@@ -42,3 +44,9 @@ def get_query_str_dict(url: str) -> Dict[str, str]:
         rs_dict[key] = value
 
     return rs_dict
+
+
+def config_ini(name: str) -> ConfigParser:
+    config_parser = ConfigParser()
+    config_parser.read(CONFIG_PATH + '/{filename}.ini'.format(filename=name))
+    return config_parser

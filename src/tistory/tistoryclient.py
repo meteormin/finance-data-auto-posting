@@ -2,13 +2,13 @@ import selenium.common.exceptions
 import time
 import requests
 from typing import Union, Dict
-from src.utils.util import make_url, get_query_str_dict
+from src.utils.util import make_url, get_query_str_dict, config_ini
 from selenium import webdriver
 from dataclasses import dataclass
-from definitions import CONFIG_PATH, ROOT_DIR
-from configparser import ConfigParser, SectionProxy
+from definitions import ROOT_DIR
+from configparser import SectionProxy
 from src.utils.customlogger import CustomLogger
-from src.contracts.blogclient import BlogClient, BlogPost, BlogPostData, BlogEndPoint, BlogResource, BlogLogin, \
+from src.contracts.blogclient import BlogClient, BlogPost, BlogPostData, BlogEndPoint, BlogLogin, \
     BlogLoginInfo
 
 
@@ -243,8 +243,7 @@ class TistoryClient(BlogClient):
 
     def __init__(self, host: str):
         super().__init__(host=host)
-        self._config = ConfigParser()
-        self._config.read(CONFIG_PATH + '/tistory.ini')
+        self._config = config_ini('tistory')
         self._logger = CustomLogger.logger('automatic-posting', __name__)
         self.blog_name = self._config['api']['blog_name']
 

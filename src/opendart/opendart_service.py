@@ -1,6 +1,5 @@
 from src.opendart.opendart_client import OpenDartClient
-from configparser import ConfigParser
-from definitions import CONFIG_PATH
+from src.utils.util import config_ini
 from src.opendart.opendart_data import *
 from src.opendart.report_code import ReportCode
 import xmltodict
@@ -26,8 +25,7 @@ class OpenDartService:
         :param api_key: open dart api key
         """
         if url is None or api_key is None:
-            self._config = ConfigParser()
-            self._config.read(CONFIG_PATH + '/opendart.ini')
+            self._config = config_ini('opendart')
             url = self._config['api']['url']
             api_key = self._config['api']['api_key']
 

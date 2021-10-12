@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from src.utils.data import BaseData
+from app.utils.data import BaseData
 
 
 @dataclass

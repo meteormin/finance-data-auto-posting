@@ -3,7 +3,7 @@ import logging
 import logging.config
 import os
 
-from src.utils.loggeradapter import LoggerAdapter
+from app.utils.loggeradapter import LoggerAdapter
 from definitions import CONFIG_PATH, LOG_PATH
 from os.path import exists
 

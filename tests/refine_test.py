@@ -1,13 +1,13 @@
-from src.tests.testable import Testable
+from app.contracts.testable import Testable
 
 
 class RefineTest(Testable):
     TAG: str = 'refine-test'
 
     def handle(self):
-        from src.refine import Refine
-        from src.tests.koapy import Koapy
-        from src.tests.opendart import Opendart
+        from app.refine.refine import Refine
+        from tests.kiwoom import Koapy
+        from tests.opendart import Opendart
         basic_info = Koapy(self._save_result).handle()
         acnt = Opendart(self._save_result).handle()
 

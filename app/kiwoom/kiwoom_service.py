@@ -1,22 +1,19 @@
 import subprocess
 from os.path import exists
-from src.koapy.koapywrapper import KoapyWrapper
+from app.kiwoom.koapy_wrapper import KoapyWrapper
 from pyhocon import ConfigFactory, HOCONConverter
-from src.utils.customlogger import CustomLogger
-from src.utils.loggeradapter import LoggerAdapter
 from typing import List
-from src.koapy.basicinfo import BasicInfo
-from src.utils.util import config_ini
+from app.kiwoom.basic_info import BasicInfo
+from app.utils.util import config_ini
 from definitions import MODULE_PATH
-import traceback
+from app.contracts.service import Service
 
 
-class KoapyService:
-    _logger: LoggerAdapter
+class KiwoomService(Service):
     _koapy_wrapper: KoapyWrapper = None
 
     def __init__(self, _id: str = None, password: str = None):
-        self._logger = CustomLogger.logger('automatic-posting', __name__)
+        super().__init__()
 
         if _id is None or password is None:
             config = config_ini('koapy')

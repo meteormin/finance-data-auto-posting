@@ -1,48 +1,14 @@
 import selenium.common.exceptions
 import time
 import requests
-from typing import Union, Dict
-from src.utils.util import make_url, get_query_str_dict, config_ini
+from typing import Union
+from app.utils.util import make_url, get_query_str_dict, config_ini
 from selenium import webdriver
-from dataclasses import dataclass
 from definitions import ROOT_DIR
 from configparser import SectionProxy
-from src.utils.customlogger import CustomLogger
-from src.contracts.blogclient import BlogClient, BlogPost, BlogPostData, BlogEndPoint, BlogLogin, \
-    BlogLoginInfo
-
-
-@dataclass(frozen=True)
-class LoginInfo(BlogLoginInfo):
-    client_id: str
-    client_secret: str
-    redirect_uri: str
-    response_type: str
-    kakao_id: str
-    kakao_password: str
-    state: str = ''
-
-
-@dataclass(frozen=True)
-class AccessTokenRequest:
-    client_id: str
-    client_secret: str
-    redirect_uri: str
-    code: str
-    grant_type: str = 'authorization_code'
-
-
-@dataclass(frozen=False)
-class PostData(BlogPostData):
-    title: str
-    content: str
-    published: str
-    slogan: str
-    tag: str
-    password: str
-    visibility: int = 0
-    category: int = 0
-    acceptComment: int = 1
+from app.utils.customlogger import CustomLogger
+from app.contracts.blog_client import *
+from app.tistory.tistory_data import *
 
 
 class TistoryLogin(BlogEndPoint, BlogLogin):

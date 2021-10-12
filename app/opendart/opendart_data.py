@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
-from typing import List, Dict
-from src.utils.data import BaseData
+from typing import List
+from app.utils.data import BaseData
 
 
 class Data(BaseData):

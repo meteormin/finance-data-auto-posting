@@ -3,8 +3,8 @@
 import click
 from os.path import exists
 import importlib
-from src.tests.testable import Testable
-from src.utils.util import camel
+from tests import Testable
+from app.utils.util import camel
 
 
 @click.command()

@@ -1,12 +1,11 @@
-from src.tests.testable import Testable
-from src.opendart.opendart_data import AcntCollection
+from app.contracts.testable import Testable
 
 
 class Opendart(Testable):
     TAG: str = 'test-opendart'
 
     def handle(self):
-        from src.opendart.opendart_service import OpenDartService
+        from app.opendart.opendart_service import OpenDartService
 
         service = OpenDartService()
         corp_code = service.get_corp_code_by_stock_code('005930')

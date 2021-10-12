@@ -1,11 +1,8 @@
 import dataclasses
-from typing import List, Dict
-from src.koapy.basicinfo import BasicInfo
-from src.opendart.opendart_data import Acnt
-from src.utils.customlogger import CustomLogger
-from src.opendart.opendart_service import OpenDartService
-from src.opendart.opendart_data import AcntCollection
-from src.utils.data import BaseData
+from app.opendart.opendart_service import OpenDartService
+from app.utils.data import BaseData
+from typing import Dict
+from app.opendart.opendart_data import AcntCollection
 
 
 @dataclasses.dataclass
@@ -69,41 +66,3 @@ class FinanceData(BaseData):
             self.flow_rate = 0
             return
         self.debt_rate = int(self.total_debt / self.total_assets * 100)
-
-
-@dataclasses.dataclass
-class RefineData(BaseData):
-    basic_info: BasicInfo = None
-    finance_data: FinanceData = None
-
-
-class Refine:
-
-    def __init__(self):
-        self._basic_info = []
-        self._acnt = []
-        self._refine_data = []
-        self._logger = CustomLogger.logger('automatic-posting', __name__)
-        self._logger.info('init: %s', __name__)
-
-    def refine(self, basic_info: List[BasicInfo], acnt: Dict[str, AcntCollection]) -> List[RefineData]:
-        self._basic_info = basic_info
-        self._acnt = acnt
-
-        for stock in basic_info:
-            self._refine_data.append(self.refine_single(stock, acnt[stock.code]))
-        return self.get_refined_data()
-
-    @staticmethod
-    def refine_single(basic_info: BasicInfo, acnt: AcntCollection) -> RefineData:
-        refine_data = RefineData()
-
-        refine_data.basic_info = basic_info
-
-        finance_data = FinanceData()
-        refine_data.finance_data = finance_data.map(acnt)
-
-        return refine_data
-
-    def get_refined_data(self) -> List[RefineData]:
-        return self._refine_data

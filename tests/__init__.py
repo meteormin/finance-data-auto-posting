@@ -1,7 +1,7 @@
 import os
-from definitions import MODULE_PATH
+from definitions import ROOT_DIR
 
-path = MODULE_PATH + '/tests'
+path = ROOT_DIR + 'tests'
 file_list = os.listdir(path)
 
 module_list = []

@@ -1,4 +1,4 @@
-from src.tests.testable import Testable
+from app.contracts.testable import Testable
 
 
 class Tistory(Testable):
@@ -16,7 +16,7 @@ class Tistory(Testable):
     def _login(self):
         self.TAG += '-login'
         from definitions import CONFIG_PATH
-        from src.tistory.tistoryclient import TistoryLogin, TistoryClient, LoginInfo
+        from app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
         from configparser import ConfigParser
 
         config = ConfigParser()
@@ -48,7 +48,7 @@ class Tistory(Testable):
     def _list(self, access_token: str):
         self.TAG += '-list'
         from definitions import CONFIG_PATH
-        from src.tistory.tistoryclient import Apis, TistoryClient, Post
+        from app.tistory.tistoryclient import Apis, TistoryClient, Post
         from configparser import ConfigParser
 
         config = ConfigParser()

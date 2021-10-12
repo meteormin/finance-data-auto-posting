@@ -2,9 +2,9 @@ import requests
 import zipfile
 import io
 import xmltodict
-from src.client.client import Client
+from app.client.client import Client
 from typing import Dict, Union
-from src.utils.util import make_url
+from app.utils.util import make_url
 
 
 class OpenDartClient(Client):

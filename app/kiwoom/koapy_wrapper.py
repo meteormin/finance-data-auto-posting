@@ -1,7 +1,7 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
-from src.koapy.stockinfo import StockInfo
-from src.koapy.basicinfo import BasicInfo
-from src.utils.customlogger import CustomLogger
+from app.kiwoom.stock_info import StockInfo
+from app.kiwoom.basic_info import BasicInfo
+from app.utils.customlogger import CustomLogger
 from typing import List
 
 

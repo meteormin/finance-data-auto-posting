@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from src.utils.customlogger import CustomLogger, LoggerAdapter
+from app.utils.customlogger import CustomLogger, LoggerAdapter
 from datetime import datetime
-from src.contracts.jsonable import Jsonable
-from src.utils.data import BaseData
+from app.contracts.jsonable import Jsonable
 import traceback
 import json
 
@@ -24,7 +23,7 @@ class Testable(ABC):
             self._logger.debug('result:' + str(result))
             self.info(str(result))
             if self._save_result:
-                self._save_json_file(result)
+                self._save_json(result)
         except (Exception,):
             self._logger.error('fail')
             self._logger.error('ERROR:')
@@ -53,8 +52,9 @@ class Testable(ABC):
         self._logger.error(msg)
         self.__console('ERROR', msg)
 
-    def _save_json_file(self, result):
-        with open('test' + '_' + self.TAG + '.json', 'w+', encoding='utf-8') as f:
+    def _save_json(self, result):
+
+        with open('/tests//test' + '_' + self.TAG + '.json', 'w+', encoding='utf-8') as f:
             if isinstance(result, str):
                 f.write(result)
             elif isinstance(result, Jsonable):

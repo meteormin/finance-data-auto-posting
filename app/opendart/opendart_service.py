@@ -1,14 +1,14 @@
 import xmltodict
 import os
-from src.opendart.opendart_client import OpenDartClient
-from src.utils.util import config_ini
-from src.opendart.opendart_data import *
-from src.opendart.report_code import ReportCode
+from app.opendart.opendart_client import OpenDartClient
+from app.utils.util import config_ini
+from app.opendart.opendart_data import *
+from app.opendart.report_code import ReportCode
 from typing import List, Dict, Union
-from src.utils.customlogger import CustomLogger
+from app.contracts.service import Service
 
 
-class OpenDartService:
+class OpenDartService(Service):
     """
     Open Dart Api
     """
@@ -24,13 +24,13 @@ class OpenDartService:
         :param url: open dart api access url
         :param api_key: open dart api key
         """
+        super().__init__()
         if url is None or api_key is None:
             self._config = config_ini('opendart')
             url = self._config['api']['url']
             api_key = self._config['api']['api_key']
 
         self._client = OpenDartClient(host=url, api_key=api_key)
-        self._logger = CustomLogger.logger('automatic-posting', __name__)
         self._logger.info('init: %s', __name__)
 
     def get_corp_codes(self) -> List[CorpCode]:

@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Dict
 from app.refine.refine_data import *
+from app.opendart.opendart_data import AcntCollection
 from app.contracts.service import Service
 
 

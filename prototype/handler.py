@@ -2,11 +2,14 @@ from abc import ABC, abstractmethod
 from app.utils.customlogger import CustomLogger, LoggerAdapter
 from datetime import datetime
 from app.contracts.jsonable import Jsonable
+from definitions import ROOT_DIR
 import traceback
 import json
+from os.path import exists
+import os
 
 
-class Testable(ABC):
+class Handler(ABC):
     TAG: str = 'test'
     output_format: str = '{datetime} - {name} - {level} - {message}'
     _logger: LoggerAdapter
@@ -53,8 +56,10 @@ class Testable(ABC):
         self.__console('ERROR', msg)
 
     def _save_json(self, result):
-
-        with open('/tests//test' + '_' + self.TAG + '.json', 'w+', encoding='utf-8') as f:
+        result_path = ROOT_DIR + '/prototype/results/'
+        if not exists(result_path):
+            os.mkdir(result_path)
+        with open(result_path + self.TAG + '.json', 'w+', encoding='utf-8') as f:
             if isinstance(result, str):
                 f.write(result)
             elif isinstance(result, Jsonable):

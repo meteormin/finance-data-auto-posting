@@ -1,8 +1,8 @@
-from app.contracts.testable import Testable
+from prototype.handler import Handler
 
 
-class Opendart(Testable):
-    TAG: str = 'test-opendart'
+class Opendart(Handler):
+    TAG: str = 'opendart'
 
     def handle(self):
         from app.opendart.opendart_service import OpenDartService

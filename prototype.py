@@ -1,10 +1,10 @@
-﻿# test scripts
-
-import click
+﻿import click
 from os.path import exists
 import importlib
-from tests import Testable
+from prototype.handler import Handler
 from app.utils.util import camel
+
+package_name = 'prototype'
 
 
 @click.command()
@@ -15,12 +15,12 @@ def main(name, save):
     """ NAME: test file name """
     click.echo('NAME: ' + name)
     click.echo('CLASS: ' + camel(name))
-    if exists('src/tests/' + name + '.py'):
-        package = importlib.import_module('src.tests')
-        module = importlib.import_module('src.tests.' + name)
-        test_class = getattr(module, camel(name))(save)
-        if isinstance(test_class, Testable):
-            test_class.run()
+    if exists('{package}/{name}.py'.format(package=package_name, name=name)):
+        package = importlib.import_module(package_name)
+        module = importlib.import_module('{package}.{name}'.format(package=package_name, name=name))
+        _class = getattr(module, camel(name))(save)
+        if isinstance(_class, Handler):
+            _class.run()
         else:
             print('class: {0} not exists'.format(name))
     else:

@@ -20,7 +20,7 @@ class KiwoomService(Service):
             _id = config['account']['id']
             password = config['account']['password']
 
-        conf = ConfigFactory.parse_file(MODULE_PATH + '/koapy/config.conf')
+        conf = ConfigFactory.parse_file(MODULE_PATH + '/kiwoom/config.conf')
         current_id = conf.get('koapy.backend.kiwoom_open_api_plus.credential.user_id')
         if exists('./koapy.conf'):
             current_id = ConfigFactory.parse_file('./koapy.conf').get(

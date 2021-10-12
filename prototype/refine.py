@@ -1,14 +1,14 @@
-from app.contracts.testable import Testable
+from prototype.handler import Handler
 
 
-class RefineTest(Testable):
-    TAG: str = 'refine-test'
+class Refine(Handler):
+    TAG: str = 'refine'
 
     def handle(self):
         from app.refine.refine import Refine
-        from tests.kiwoom import Koapy
-        from tests.opendart import Opendart
-        basic_info = Koapy(self._save_result).handle()
+        from prototype.kiwoom import Kiwoom
+        from prototype.opendart import Opendart
+        basic_info = Kiwoom(self._save_result).handle()
         acnt = Opendart(self._save_result).handle()
 
         refine = Refine()

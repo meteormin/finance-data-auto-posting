@@ -2,6 +2,23 @@
 
 > alpha 버전 완료 일정: 2021.10.27
 
+## v2.0-alpha.4
+
+### 2021.10.12
+
+**feat**
+
+- 전체 구조 변경
+    - src > app
+    - koapy > kiwoom
+    - koapy_service > kiwoom_service
+    - tistory, refine 패키지 모듈 기능 및 목적에 따라 파일 분리
+- 테스트 결과 저장 디렉토리 생성
+
+**fix**
+
+- tests 패키지 명을 사용할 수 없어 기존 테스트툴을 prototype으로 명명
+
 ## v2.0-alpha.3
 
 ### 2021.10.11
@@ -21,7 +38,7 @@
 - opdart
     - Acnt 리스트 다루기 쉽게 AcntCollection 클래스 생성
 - Refine
-  - refine 모듈 구현, 데이터 정확도 체크 필요
+    - refine 모듈 구현, 데이터 정확도 체크 필요
 
 **fix**
 

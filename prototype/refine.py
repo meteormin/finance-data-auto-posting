@@ -5,7 +5,7 @@ class Refine(Handler):
     TAG: str = 'refine'
 
     def handle(self):
-        from fdap.app.refine import Refine
+        from fdap.app.refine.refine import Refine
         from prototype.kiwoom import Kiwoom
         from prototype.opendart import Opendart
         basic_info = Kiwoom(self._save_result).handle()

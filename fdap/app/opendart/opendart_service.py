@@ -1,6 +1,7 @@
 import xmltodict
 import os
 from fdap.app.opendart.opendart_client import OpenDartClient
+from fdap.app.opendart.opendart_data import *
 from fdap.app.utils.util import config_ini
 from fdap.app.opendart.report_code import ReportCode
 from typing import List, Dict, Union

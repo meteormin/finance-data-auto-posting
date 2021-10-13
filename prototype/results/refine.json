@@ -3,23 +3,26 @@
     "finance_data": {
       "current_assets": 209155353000000,
       "date": "2021.01.01 ~ 2021.03.31",
-      "debt_rate": 30,
+      "debt_rate": 30.18,
       "deficit_count": 0,
       "floating_debt": 90109462000000,
-      "flow_rate": 232,
+      "flow_rate": 232.11,
       "net_income": 7141685000000,
+      "pbr": 0.0,
+      "per": 0.0,
       "reprt_code": "11013",
+      "roe": 0.0,
       "total_assets": 392826274000000,
       "total_capital": 274268591000000,
       "total_debt": 118557683000000
     },
     "stock_info": {
-      "capital": 4119150,
+      "capital": 4107210,
       "code": "005930",
-      "current_price": 69000,
+      "current_price": 68800,
       "name": "삼성전자",
       "pbr": "1.75",
-      "per": "17.96",
+      "per": "17.91",
       "roe": "10.0"
     }
   }

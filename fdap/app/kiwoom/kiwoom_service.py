@@ -1,12 +1,12 @@
 import subprocess
 from os.path import exists
-from app.kiwoom.koapy_wrapper import KoapyWrapper
+from fdap.app.kiwoom.koapy_wrapper import KoapyWrapper
 from pyhocon import ConfigFactory, HOCONConverter
 from typing import List
-from app.kiwoom.basic_info import BasicInfo
-from app.utils.util import config_ini
-from definitions import MODULE_PATH
-from app.contracts.service import Service
+from fdap.app.kiwoom.basic_info import BasicInfo
+from fdap.app.utils.util import config_ini
+from fdap.definitions import MODULE_PATH
+from fdap.app.contracts.service import Service
 
 
 class KiwoomService(Service):

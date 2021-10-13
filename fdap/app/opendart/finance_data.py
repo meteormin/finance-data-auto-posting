@@ -1,8 +1,8 @@
 import dataclasses
-from app.opendart.opendart_service import OpenDartService
-from app.utils.data import BaseData
+from fdap.app.opendart.opendart_service import OpenDartService
+from fdap.app.utils.data import BaseData
 from typing import Dict
-from app.opendart.opendart_data import AcntCollection
+from fdap.app.opendart.opendart_data import AcntCollection
 
 
 @dataclasses.dataclass
@@ -13,10 +13,14 @@ class FinanceData(BaseData):
     total_assets: int = 0
     floating_debt: int = 0
     total_debt: int = 0
+    total_capital: int = 0
     net_income: int = 0
-    flow_rate: int = 0
-    debt_rate: int = 0
     deficit_count: int = 0
+    flow_rate: float = 0
+    debt_rate: float = 0
+    pbr: float = 0.0
+    per: float = 0.0
+    roe: float = 0.0
 
     @staticmethod
     def get_map_table() -> Dict[str, Dict[str, str]]:
@@ -50,19 +54,32 @@ class FinanceData(BaseData):
 
                     self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
 
-            self._calculate_flow_rate()
-            self._calculate_debt_rate()
+            self.calculate_flow_rate()
+            self.calculate_debt_rate()
+            self.calculate_roe()
 
         return self
 
-    def _calculate_flow_rate(self):
+    def calculate_flow_rate(self):
         if self.floating_debt == 0:
             self.flow_rate = 0
             return
-        self.flow_rate = int(self.current_assets / self.floating_debt * 100)
+        self.flow_rate = round(self.current_assets / self.floating_debt * 100, 2)
+        return self
 
-    def _calculate_debt_rate(self):
+    def calculate_debt_rate(self):
         if self.total_assets == 0:
             self.flow_rate = 0
-            return
-        self.debt_rate = int(self.total_debt / self.total_assets * 100)
+            return self
+        self.debt_rate = round(self.total_debt / self.total_assets * 100, 2)
+        return self
+
+    def calculate_per(self, current_price: int, issue_cnt: int):
+        pass
+
+    def calculate_pbr(self, current_price: int, issue_cnt: int):
+        pass
+
+    def calculate_roe(self):
+        self.roe = round((self.net_income / self.total_capital) * 100, 2)
+        return self

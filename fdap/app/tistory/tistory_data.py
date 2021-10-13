@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from app.contracts.blog_client import BlogLoginInfo, BlogPostData
+from fdap.app.contracts.blog_client import BlogLoginInfo, BlogPostData
 
 
 @dataclass(frozen=True)

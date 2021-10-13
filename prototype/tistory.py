@@ -15,8 +15,8 @@ class Tistory(Handler):
 
     def _login(self):
         self.TAG += '-login'
-        from definitions import CONFIG_PATH
-        from app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
+        from fdap.definitions import CONFIG_PATH
+        from fdap.app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
         from configparser import ConfigParser
 
         config = ConfigParser()
@@ -47,8 +47,8 @@ class Tistory(Handler):
 
     def _list(self, access_token: str):
         self.TAG += '-list'
-        from definitions import CONFIG_PATH
-        from app.tistory.tistory_client import Apis, TistoryClient, Post
+        from fdap.definitions import CONFIG_PATH
+        from fdap.app.tistory.tistory_client import Apis, TistoryClient, Post
         from configparser import ConfigParser
 
         config = ConfigParser()

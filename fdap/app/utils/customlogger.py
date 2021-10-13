@@ -1,10 +1,9 @@
-import json
 import logging
 import logging.config
 import os
 
-from app.utils.loggeradapter import LoggerAdapter
-from definitions import CONFIG_PATH, LOG_PATH
+from fdap.app.utils.loggeradapter import LoggerAdapter
+from fdap.definitions import CONFIG_PATH, LOG_PATH
 from os.path import exists
 
 

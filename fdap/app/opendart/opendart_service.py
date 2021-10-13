@@ -1,11 +1,11 @@
 import xmltodict
 import os
-from app.opendart.opendart_client import OpenDartClient
-from app.utils.util import config_ini
-from app.opendart.opendart_data import *
-from app.opendart.report_code import ReportCode
+from fdap.app.opendart.opendart_client import OpenDartClient
+from fdap.app.utils.util import config_ini
+from fdap.app.opendart.report_code import ReportCode
 from typing import List, Dict, Union
-from app.contracts.service import Service
+from fdap.app.contracts.service import Service
+from configparser import ConfigParser
 
 
 class OpenDartService(Service):
@@ -17,6 +17,8 @@ class OpenDartService(Service):
     Q3: ReportCode.Q3 = ReportCode.Q3
     Q4: ReportCode.Q4 = ReportCode.Q4
     QUARTERS: dict = ReportCode.__members__
+    _config: ConfigParser
+    _client: OpenDartClient
 
     def __init__(self, url: str = None, api_key: str = None):
         """

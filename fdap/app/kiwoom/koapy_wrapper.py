@@ -1,7 +1,7 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
-from app.kiwoom.stock_info import StockInfo
-from app.kiwoom.basic_info import BasicInfo
-from app.utils.customlogger import CustomLogger
+from fdap.app.kiwoom.stock_info import StockInfo
+from fdap.app.kiwoom.basic_info import BasicInfo
+from fdap.app.utils.customlogger import CustomLogger
 from typing import List
 
 
@@ -11,6 +11,7 @@ class KoapyWrapper:
     Attributes:
         koapy: koapy
     """
+    _koapy: KiwoomOpenApiPlusEntrypoint
 
     def __init__(self):
         self._koapy = KiwoomOpenApiPlusEntrypoint()

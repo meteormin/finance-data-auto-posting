@@ -1,20 +1,21 @@
 from typing import List, Dict
-from app.refine.refine_data import *
-from app.opendart.opendart_data import AcntCollection
-from app.contracts.service import Service
+from fdap.app.opendart.opendart_data import AcntCollection
+from fdap.app.contracts.service import Service
 
 
 class Refine(Service):
+    _basic_info: List[BasicInfo]
+    _acnt: Dict[str, AcntCollection]
+    _refine_data: List[RefineData]
 
     def __init__(self):
         super().__init__()
-
         self._basic_info = []
-        self._acnt = []
+        self._acnt = {}
         self._refine_data = []
         self._logger.info('init: %s', __name__)
 
-    def refine(self, basic_info: List[BasicInfo], acnt: Dict[str, AcntCollection]) -> List[RefineData]:
+    def refine_multiple(self, basic_info: List[BasicInfo], acnt: Dict[str, AcntCollection]) -> List[RefineData]:
         self._basic_info = basic_info
         self._acnt = acnt
 
@@ -30,6 +31,9 @@ class Refine(Service):
 
         finance_data = FinanceData()
         refine_data.finance_data = finance_data.map(acnt)
+        issue_cnt = int((basic_info.capital * 100000000) / basic_info.current_price)
+        refine_data.finance_data.calculate_pbr(basic_info.current_price, issue_cnt)
+        refine_data.finance_data.calculate_per(basic_info.current_price, issue_cnt)
 
         return refine_data
 

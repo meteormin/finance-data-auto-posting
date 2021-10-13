@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from app.utils.customlogger import CustomLogger, LoggerAdapter
+from fdap.app.utils.loggeradapter import LoggerAdapter
+from fdap.app.utils.customlogger import CustomLogger
 from datetime import datetime
-from app.contracts.jsonable import Jsonable
-from definitions import ROOT_DIR
+from fdap.app.contracts.jsonable import Jsonable
+from fdap.definitions import ROOT_DIR
 import traceback
 import json
 from os.path import exists

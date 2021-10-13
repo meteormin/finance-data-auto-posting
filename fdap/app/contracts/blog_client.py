@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from app.client.client import Client
+from fdap.app.client.client import Client
 from typing import Dict
 
 

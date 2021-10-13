@@ -2,13 +2,12 @@ import selenium.common.exceptions
 import time
 import requests
 from typing import Union
-from app.utils.util import make_url, get_query_str_dict, config_ini
+from fdap.app.utils.util import make_url, get_query_str_dict, config_ini
 from selenium import webdriver
-from definitions import ROOT_DIR
+from fdap.definitions import ROOT_DIR
 from configparser import SectionProxy
-from app.utils.customlogger import CustomLogger
-from app.contracts.blog_client import *
-from app.tistory.tistory_data import *
+from fdap.app.utils.customlogger import CustomLogger
+from fdap.app.contracts.blog_client import *
 
 
 class TistoryLogin(BlogEndPoint, BlogLogin):

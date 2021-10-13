@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
 from typing import List
-from app.utils.data import BaseData
+from fdap.app.utils.data import BaseData
 
 
 class Data(BaseData):
@@ -70,7 +70,9 @@ class Acnt(Data):
 class AcntCollection(Data):
     _items: List[Acnt]
 
-    def __init__(self, acnt_list: List[Acnt] = []):
+    def __init__(self, acnt_list: List[Acnt] = None):
+        if acnt_list is None:
+            acnt_list = []
         self._items = acnt_list
 
     def push(self, acnt: Acnt):

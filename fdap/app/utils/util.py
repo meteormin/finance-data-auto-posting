@@ -2,7 +2,7 @@ import re
 import json
 from typing import Dict
 from configparser import ConfigParser
-from definitions import CONFIG_PATH
+from fdap.definitions import CONFIG_PATH
 
 
 def snake(s: str):

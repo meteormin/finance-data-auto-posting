@@ -1,5 +1,5 @@
-from app.contracts.logging import Logging
-from app.exceptions.parse_exceptoin import ParseException
+from fdap.app.contracts.logging import Logging
+from fdap.app.exceptions.parse_exceptoin import ParseException
 
 
 class Service(Logging):

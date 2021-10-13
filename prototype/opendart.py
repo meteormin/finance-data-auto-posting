@@ -2,10 +2,10 @@ from prototype.handler import Handler
 
 
 class Opendart(Handler):
-    TAG: str = 'opendart'
+    TAG: str = 'opendart-005930'
 
     def handle(self):
-        from app.opendart.opendart_service import OpenDartService
+        from fdap.app.opendart.opendart_service import OpenDartService
 
         service = OpenDartService()
         corp_code = service.get_corp_code_by_stock_code('005930')

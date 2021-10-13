@@ -4,5 +4,5 @@ __pycache__/
 CORPCODE.xml
 koapy.conf
 .idea
-chromedriver.exe
+fdap/chromedriver.exe
 logs

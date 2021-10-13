@@ -8,6 +8,7 @@ from fdap.definitions import ROOT_DIR
 from configparser import SectionProxy
 from fdap.app.utils.customlogger import CustomLogger
 from fdap.app.contracts.blog_client import *
+from fdap.app.tistory.tistory_data import *
 
 
 class TistoryLogin(BlogEndPoint, BlogLogin):

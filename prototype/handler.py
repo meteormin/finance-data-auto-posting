@@ -57,7 +57,7 @@ class Handler(ABC):
         self.__console('ERROR', msg)
 
     def _save_json(self, result):
-        result_path = ROOT_DIR + '/prototype/results/'
+        result_path = ROOT_DIR + '/../prototype/results/'
         if not exists(result_path):
             os.mkdir(result_path)
         with open(result_path + self.TAG + '.json', 'w+', encoding='utf-8') as f:

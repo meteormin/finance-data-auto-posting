@@ -54,9 +54,9 @@ class FinanceData(BaseData):
 
                     self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
 
-            self.calculate_flow_rate()
-            self.calculate_debt_rate()
-            self.calculate_roe()
+        self.calculate_flow_rate()
+        self.calculate_debt_rate()
+        self.calculate_roe()
 
         return self
 

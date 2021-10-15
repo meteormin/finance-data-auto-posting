@@ -15,9 +15,5 @@ class Refine(Handler):
 
         refine_data = refine.refine_single(basic_info, acnt)
 
-        return {
-            'refined': {
-                'stock_info': refine_data.basic_info.__dict__,
-                'finance_data': refine_data.finance_data.__dict__
-            }
-        }
+        return refine_data
+        # return refine_data.to_dict()

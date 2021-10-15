@@ -2,6 +2,17 @@
 
 > alpha 버전 완료 일정: 2021.10.27
 
+## v2.0-alpha.6
+
+### 2021.10.16
+
+**feat**
+
+- fdap/app/infographic.py
+    - DataFrame 생성 및 차트, 표 관련 함수
+- infographic 프로토타입 모듈 테스트 추가
+    - 이미지 생성 및 저장 테스트 성공
+
 ## v2.0-alpha.5
 
 ### 2021.10.13

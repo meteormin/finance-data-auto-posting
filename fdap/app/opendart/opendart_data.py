@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
 from typing import List
-from fdap.app.utils.data import BaseData
+from fdap.app.utils.data import BaseData, BaseCollection
 
 
 class Data(BaseData):
@@ -67,7 +67,7 @@ class Acnt(Data):
         return super().map_list(data_list)
 
 
-class AcntCollection(Data):
+class AcntCollection(Data, BaseCollection):
     _items: List[Acnt]
 
     def __init__(self, acnt_list: List[Acnt] = None):

@@ -3,6 +3,7 @@ import json
 from typing import Dict
 from configparser import ConfigParser
 from fdap.definitions import CONFIG_PATH
+import ctypes
 
 
 def snake(s: str):
@@ -55,3 +56,10 @@ def config_ini(name: str) -> ConfigParser:
 
 def object_to_json(obj: object):
     return json.dumps(obj, default=lambda o: o.__dict__, sort_keys=True, indent=2, ensure_ascii=False)
+
+
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except(Exception,):
+        return False

@@ -17,6 +17,7 @@ class RefineData(BaseData, TableData):
         return {
             'stock_code': self.basic_info.code,
             'stock_name': self.basic_info.name,
+            'current_price': self.basic_info.current_price,
             'market_cap': self.basic_info.capital,
             'deficit_count': self.finance_data.deficit_count,
             'per': self.finance_data.per,

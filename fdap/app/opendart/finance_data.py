@@ -16,8 +16,8 @@ class FinanceData(BaseData):
     total_capital: int = 0
     net_income: int = 0
     deficit_count: int = 0
-    flow_rate: float = 0
-    debt_rate: float = 0
+    flow_rate: float = 0.0
+    debt_rate: float = 0.0
     pbr: float = 0.0
     per: float = 0.0
     roe: float = 0.0

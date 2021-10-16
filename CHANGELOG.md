@@ -2,6 +2,21 @@
 
 > alpha 버전 완료 일정: 2021.10.27
 
+## v2.0-alpha.7
+
+### 2021.10.16
+
+**feat**
+
+표 생성과 차트 생성 파일 분리하여 클래스로 작성
+
+- fdap/app/infographic/table.py
+    - DataFrame 생성 및 표 이미지 저장
+- fdap/app/infographic/chart.py
+    - 차트 이미지 저장
+- 변경사항 infographic 프로토타입 모듈 반영 및 테스트 완료
+    - [프로토타입 결과](./prototype/results)
+
 ## v2.0-alpha.6
 
 ### 2021.10.16

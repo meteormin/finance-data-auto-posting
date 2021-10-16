@@ -1,1 +1,13 @@
-success?
+{
+  "chart": [
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_current_price.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_market_cap.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_deficit_count.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_per.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_pbr.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_roe.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_flow_rate.png",
+    "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-chart_debt_rate.png"
+  ],
+  "table": "G:\\다른 컴퓨터\\내 컴퓨터\\Bachelor\\LastTerm\\Project\\src\\fdap/../prototype/results/infographic-table.png"
+}

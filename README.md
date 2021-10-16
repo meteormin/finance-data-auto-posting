@@ -19,26 +19,6 @@
 2. 재무정보를 가져오기 위해 OpenDart API를 사용
 3. 포스팅 블로그는 티스토리 블로그 선택
 
-## 화면 설계
-
-### 포스팅 화면
-
-![view-posting](./docs/storyboard/01_Posting.png)
-
-### 관리자 화면
-
-**Main**
-
-![view-admin](./docs/storyboard/02_Admin.png)
-
-**Log Viewer**
-
-![view-log](./docs/storyboard/03_Adminlog-viewer.png)
-
-**Settings**
-
-![view-settings](./docs/storyboard/04_Settting.png)
-
 ## 개발환경
 
 ### OS
@@ -60,9 +40,32 @@ Django Framework
 [requirements.txt](requirements.txt)
 
 ## 설치방법
+
 > 노션 문서 생성 예정
+
 ## 사용법
+
 > 노션 문서 생성 예정
+
+## 화면 설계
+
+### 포스팅 화면
+
+![view-posting](./docs/storyboard/01_Posting.png)
+
+### 관리자 화면
+
+**Main**
+
+![view-admin](./docs/storyboard/02_Admin.png)
+
+**Log Viewer**
+
+![view-log](./docs/storyboard/03_Adminlog-viewer.png)
+
+**Settings**
+
+![view-settings](./docs/storyboard/04_Settting.png)
 
 ## 항목 분석
 
@@ -71,5 +74,7 @@ Django Framework
 ## DB 명세
 
 ## 기능 명세
+
+## [Prototyping](./prototype)
 
 ## [changelog](./CHANGELOG.md)

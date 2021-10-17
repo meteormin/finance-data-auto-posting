@@ -15,12 +15,10 @@ class Tistory(Handler):
 
     def _login(self):
         self.TAG += '-login'
-        from fdap.definitions import CONFIG_PATH
         from fdap.app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
-        from configparser import ConfigParser
+        from fdap.utils.util import config_json
 
-        config = ConfigParser()
-        config.read(CONFIG_PATH + '/tistory.ini')
+        config = config_json('tistory')
         api_config = config['api']
         kakao_config = config['kakao']
         webdriver_config = config['webdriver']

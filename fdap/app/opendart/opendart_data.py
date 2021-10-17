@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass
 from typing import List
-from fdap.app.utils.data import BaseData, BaseCollection
+from fdap.utils.data import BaseData, BaseCollection
 
 
 class Data(BaseData):

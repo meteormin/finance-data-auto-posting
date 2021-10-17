@@ -2,7 +2,7 @@
 from os.path import exists
 import importlib
 from prototype.handler import Handler
-from fdap.app.utils.util import camel, is_admin
+from fdap.utils.util import camel, is_admin
 
 package_name = 'prototype'
 

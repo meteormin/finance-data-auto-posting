@@ -35,6 +35,10 @@ class Refine(Service):
         finance_data = FinanceData()
         refine_data.finance_data = finance_data.map(acnt)
         issue_cnt = int((basic_info.capital * 100000000) / basic_info.current_price)
+
+        refine_data.finance_data.calculate_flow_rate()
+        refine_data.finance_data.calculate_debt_rate()
+        refine_data.finance_data.calculate_roe()
         refine_data.finance_data.calculate_pbr(basic_info.current_price, issue_cnt)
         refine_data.finance_data.calculate_per(basic_info.current_price, issue_cnt)
 

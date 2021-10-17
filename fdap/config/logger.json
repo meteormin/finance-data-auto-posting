@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "formatters": {
+    "simple": {
+      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "level": "DEBUG",
+      "formatter": "simple",
+      "stream": "ext://sys.stdout"
+    },
+    "info_file_handler": {
+      "class": "logging.handlers.TimedRotatingFileHandler",
+      "level": "DEBUG",
+      "formatter": "simple",
+      "filename": "logs/automatic-posting.log",
+      "when": "midnight",
+      "interval": 1,
+      "encoding": "utf-8"
+    },
+    "test_file_handler": {
+      "class": "logging.handlers.TimedRotatingFileHandler",
+      "level": "DEBUG",
+      "formatter": "simple",
+      "filename": "logs/tests/test.log",
+      "when": "midnight",
+      "interval": 1,
+      "encoding": "utf-8"
+    }
+  },
+  "root": {
+    "level": "DEBUG",
+    "handlers": [
+      "console"
+    ]
+  },
+  "loggers": {
+    "root": {
+      "level": "DEBUG",
+      "handlers": [
+        "console"
+      ]
+    },
+    "automatic-posting": {
+      "level": "DEBUG",
+      "handlers": [
+        "info_file_handler"
+      ],
+      "propagate": "no"
+    },
+    "test": {
+      "level": "DEBUG",
+      "handlers": [
+        "info_file_handler"
+      ],
+      "propagate": "no"
+    }
+  }
+}

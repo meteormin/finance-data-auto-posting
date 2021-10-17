@@ -4,7 +4,7 @@ import io
 import xmltodict
 from fdap.app.client.client import Client
 from typing import Dict, Union
-from fdap.app.utils.util import make_url
+from fdap.utils.util import make_url
 
 
 class OpenDartClient(Client):

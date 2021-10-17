@@ -1,5 +1,5 @@
 import dataclasses
-from fdap.app.utils.data import BaseData, BaseCollection
+from fdap.utils.data import BaseData, BaseCollection
 from fdap.app.kiwoom.basic_info import BasicInfo
 from fdap.app.opendart.finance_data import FinanceData
 from fdap.app.contracts.convertible import TableData

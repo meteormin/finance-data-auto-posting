@@ -6,3 +6,4 @@ koapy.conf
 .idea
 fdap/chromedriver.exe
 logs
+*.whl

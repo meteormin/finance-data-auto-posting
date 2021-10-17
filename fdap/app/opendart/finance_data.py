@@ -1,6 +1,6 @@
 import dataclasses
 from fdap.app.opendart.opendart_service import OpenDartService
-from fdap.app.utils.data import BaseData
+from fdap.utils.data import BaseData
 from typing import Dict
 from fdap.app.opendart.opendart_data import AcntCollection
 
@@ -54,10 +54,6 @@ class FinanceData(BaseData):
 
                     self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
 
-        self.calculate_flow_rate()
-        self.calculate_debt_rate()
-        self.calculate_roe()
-
         return self
 
     def calculate_flow_rate(self):
@@ -79,7 +75,7 @@ class FinanceData(BaseData):
         return self
 
     def calculate_pbr(self, current_price: int, issue_cnt: int):
-        self.pbr = round((current_price / (self.total_capital - self.total_debt)) / issue_cnt, 2)
+        self.pbr = round(current_price / ((self.total_capital - self.total_debt) / issue_cnt), 2)
         return self
 
     def calculate_roe(self):

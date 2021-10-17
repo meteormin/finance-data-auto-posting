@@ -4,8 +4,8 @@ from fdap.app.kiwoom.koapy_wrapper import KoapyWrapper
 from pyhocon import ConfigFactory, HOCONConverter
 from typing import List
 from fdap.app.kiwoom.basic_info import BasicInfo
-from fdap.app.utils.util import config_ini
-from fdap.definitions import MODULE_PATH
+from fdap.utils.util import config_json
+from fdap.definitions import APP_PATH
 from fdap.app.contracts.service import Service
 
 
@@ -16,11 +16,11 @@ class KiwoomService(Service):
         super().__init__()
 
         if _id is None or password is None:
-            config = config_ini('koapy')
+            config = config_json('koapy')
             _id = config['account']['id']
             password = config['account']['password']
 
-        conf = ConfigFactory.parse_file(MODULE_PATH + '/kiwoom/config.conf')
+        conf = ConfigFactory.parse_file(APP_PATH + '/kiwoom/config.conf')
         current_id = conf.get('koapy.backend.kiwoom_open_api_plus.credential.user_id')
         if exists('./koapy.conf'):
             current_id = ConfigFactory.parse_file('./koapy.conf').get(

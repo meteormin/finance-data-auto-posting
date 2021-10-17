@@ -1,6 +1,6 @@
 from abc import ABC
-from fdap.app.utils.loggeradapter import LoggerAdapter
-from fdap.app.utils.customlogger import CustomLogger
+from fdap.utils.loggeradapter import LoggerAdapter
+from fdap.utils.customlogger import CustomLogger
 
 
 class Logging(ABC):

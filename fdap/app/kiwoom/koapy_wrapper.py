@@ -1,7 +1,7 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
 from fdap.app.kiwoom.stock_info import StockInfo
 from fdap.app.kiwoom.basic_info import BasicInfo
-from fdap.app.utils.customlogger import CustomLogger
+from fdap.utils.customlogger import CustomLogger
 from typing import List
 
 

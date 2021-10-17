@@ -21,8 +21,8 @@ class Infographic(Handler):
         fd.flow_rate = 232.11
         fd.debt_rate = 30.18
         fd.deficit_count = 0
-        fd.per = 12.1
-        fd.pbr = 13.5
+        fd.per = 58.6
+        fd.pbr = 2.69
         return fd
 
     @staticmethod

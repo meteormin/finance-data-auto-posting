@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from fdap.app.utils.loggeradapter import LoggerAdapter
-from fdap.app.utils.customlogger import CustomLogger
+from fdap.utils.loggeradapter import LoggerAdapter
+from fdap.utils.customlogger import CustomLogger
 from datetime import datetime
 from fdap.app.contracts.jsonable import Jsonable
 from fdap.definitions import ROOT_DIR

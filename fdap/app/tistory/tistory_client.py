@@ -2,11 +2,11 @@ import selenium.common.exceptions
 import time
 import requests
 from typing import Union
-from fdap.app.utils.util import make_url, get_query_str_dict, config_ini
+from fdap.utils.util import make_url, get_query_str_dict, config_json
 from selenium import webdriver
 from fdap.definitions import ROOT_DIR
 from configparser import SectionProxy
-from fdap.app.utils.customlogger import CustomLogger
+from fdap.utils.customlogger import CustomLogger
 from fdap.app.contracts.blog_client import *
 from fdap.app.tistory.tistory_data import *
 
@@ -14,7 +14,7 @@ from fdap.app.tistory.tistory_data import *
 class TistoryLogin(BlogEndPoint, BlogLogin):
     _end_point = '/oauth'
 
-    def __init__(self, host: str, config: SectionProxy):
+    def __init__(self, host: str, config: Union[SectionProxy, dict]):
         super().__init__(host)
         self._config = config
         self._logger = CustomLogger.logger('automatic-posting', __name__)
@@ -209,7 +209,7 @@ class TistoryClient(BlogClient):
 
     def __init__(self, host: str):
         super().__init__(host=host)
-        self._config = config_ini('tistory')
+        self._config = config_json('tistory')
         self._logger = CustomLogger.logger('automatic-posting', __name__)
         self.blog_name = self._config['api']['blog_name']
 

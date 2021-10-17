@@ -1,0 +1,23 @@
+{
+  "kakao": {
+    "id": "{your-kakao-id}",
+    "password": "{your-kakao-password}"
+  },
+  "api": {
+    "url": "https://www.tistory.com",
+    "client_id": "{tistory-api-client-id}",
+    "client_secret": "{tistory-api-client-secret}",
+    "redirect_uri": "https:,//{your-blog-name}.tistory.com",
+    "response_type": "code",
+    "state": "{check-state}",
+    "blog_name": "{your-blog-name}"
+  },
+  "webdriver": {
+    "driver_name": "chromedriver.exe",
+    "confirm_btn": ".confirm",
+    "kakao_login_link": ".link_kakao_id",
+    "kakao_email_input": "#id_email_2",
+    "kakao_pass_input": "#id_password_3",
+    "kakao_login_submit": ".submit"
+  }
+}

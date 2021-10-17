@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from fdap.app.utils.data import BaseData
+from fdap.utils.data import BaseData
 
 
 @dataclass

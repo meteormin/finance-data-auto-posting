@@ -1,0 +1,6 @@
+{
+  "api": {
+    "url": "https://opendart.fss.or.kr",
+    "api_key": "{your-api-key}"
+  }
+}

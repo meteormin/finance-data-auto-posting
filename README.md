@@ -69,9 +69,70 @@ Django Framework
 
 ## 항목 분석
 
+> 항목별 순위를 매겨 합산할 결과로 종목별 순위를 결정한다.
+
+|항목|정렬조건|비고|
+|------|---|---|
+|시가총액|내림차순||
+|적자횟수|오름차순||
+|PER|오름차순|주당 수익률<br>_주가/주당순이익(당기순이익/발행주식 수)_|
+|PBR|오름차순|주당 순 자산 비율<br>_주가/주당순자산((총자산-총부채)/발행주식 수)_|
+|ROE|내림차순|자기자본이익률<br>_(당기순이익/자기자본)*100_|
+|유동비율|내림차순|_(유동자산/유동부채)*100_|
+|부채비율|오름차순|_(부채총계/자본총계)*100_|
+
 ## 시스템 구성
 
+### 시스템 구조
+
+![system](./docs/flowchart/system.png)
+
+### 모듈 구조
+
+![modules](./docs/flowchart/python-modules.png)
+
+### 기능 흐름도
+
+![flow](./docs/flowchart/flow.png)
+
 ## DB 명세
+
+### posts
+
+> 포스팅 정보 저장
+
+|속성|데이터 유형|키 여부|설명|
+|------|---|---|---|
+|post_id|int|pk|Identifier|
+|post_subject|varchar||제목|
+|post_contents|text||내용|
+|post_category|varchar||카테고리|
+|post_tags|varchar||태그(,)로 구분|
+|post_sector|varchar||sector|
+|is_success|tinyint||성공여부|
+|post_url|varchar||실제 블로그 포스트 URL|
+|created_at|timestamp||작성일|
+
+### uploaded_image
+
+> 업로드 이미지 저장 및 연결
+
+|속성|데이터 유형|키 여부|설명|
+|------|---|---|---|
+|image_id|int|pk|Identifier|
+|post_id|int|fk|포스트 ID|
+|image_url|varchar||업로드한 이미지의 url|
+|image_path|varchar||업로드한 이미지 파일 경로|
+
+### linked_post
+
+> 각각의 포스팅은 이전 포스팅을 연결할 수 있기 때문에 그 관게를 저장하는 테이블
+
+|속성|데이터 유형|키 여부|설명|
+|------|---|---|---|
+|link_id|int|pk|Identifier|
+|parent_id|int|fk|포스트 ID(연결되어 진)|
+|child_id|int|fk|포스트 ID(연결한 주체)|
 
 ## 기능 명세
 

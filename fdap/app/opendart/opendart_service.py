@@ -59,10 +59,11 @@ class OpenDartService(Service):
 
         return CorpCode().map_list(corp_code_dict)
 
-    def get_corp_code_by_stock_code(self, stock_code: str):
+    def get_corp_code_by_stock_code(self, stock_code: str) -> Union[CorpCode, None]:
         for corp_code in self.get_corp_codes():
             if stock_code == corp_code.stock_code:
                 return corp_code
+        return None
 
     def get_single(self, corp_code: str, year: str, report_code: ReportCode) -> Union[Dict[str, AcntCollection], None]:
         self._logger.debug('request get single corp accounts')
@@ -79,7 +80,7 @@ class OpenDartService(Service):
 
         return single
 
-    def get_multi(self, corp_codes: list, year: str, report_code: ReportCode) -> Dict[str, List[Acnt]]:
+    def get_multi(self, corp_codes: list, year: str, report_code: ReportCode) -> Dict[str, AcntCollection]:
         self._logger.debug('request get multiple corp accounts')
         multi_acnt = self._client.get_multi(corp_codes, year, report_code.value)
         if self._client.is_success():
@@ -101,7 +102,7 @@ class OpenDartService(Service):
                 acnt = self.get_single(corp_code, str(int(year) - i), q)
                 if acnt is not None:
                     for acnt_collect in acnt.values():
-                        account = acnt_collect.get_by_account_nm('당기순이익')
+                        account = acnt_collect.get_by_account_nm('당기순')
                         if account is not None:
                             if account.thstrm_amount is not None:
                                 if int(account.thstrm_amount) < 0:

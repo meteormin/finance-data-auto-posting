@@ -16,8 +16,13 @@ class BlogLoginInfo(ABC):
 
 
 class BlogResource(ABC, Client):
+    access_token: str = None
     _resource: str
-    access_token: str
+    _config: Dict[str, any]
+
+    def __init__(self, host: str, config: Dict[str, any]):
+        super().__init__(host)
+        self._config = config
 
 
 class BlogPost(BlogResource):
@@ -39,20 +44,19 @@ class BlogPost(BlogResource):
         pass
 
 
-class BlogLogin(ABC, Client):
-
-    @abstractmethod
-    def login(self, login_info: BlogLoginInfo):
-        pass
-
-
-class BlogEndPoint(ABC):
+class BlogEndPoint(ABC, Client):
     _end_point: str
     _resources: Dict[type, BlogResource] = {}
     _classes: Dict[str, type] = {}
+    _config: Dict[str, any] = {}
+    access_token: str = None
+
+    def __init__(self, host: str, config: dict):
+        super().__init__(host)
+        self._config = config
 
     def set_resource(self, name: type, res: BlogResource):
-        self._resources[name] = res.set_host(res.get_host() + self._end_point)
+        self._resources[name] = res
         return self
 
     def get_resource(self, name: type):
@@ -62,6 +66,11 @@ class BlogEndPoint(ABC):
 class BlogClient(ABC, Client):
     _end_points: Dict[type, BlogEndPoint] = {}
     _classes: Dict[str, type] = {}
+    _config: Dict[str, any] = {}
+
+    def __init__(self, host: str, config: dict):
+        super().__init__(host)
+        self._config = config
 
     @abstractmethod
     def login(self, obj: object):
@@ -77,3 +86,10 @@ class BlogClient(ABC, Client):
         if name in self._end_points:
             return self._end_points[name]
         return None
+
+
+class BlogLogin(BlogEndPoint):
+
+    @abstractmethod
+    def login(self, login_info: BlogLoginInfo):
+        pass

@@ -34,19 +34,16 @@ class Table:
         before_sort = df
         data = self._data
 
-        start = False
         for attr, priority in data.sort_attr().items():
             before_sort = before_sort.sort_values(attr, ascending=priority)
-            if start:
+            if 'rank' in before_sort:
                 before_sort['rank'] += before_sort.index
             else:
                 before_sort['rank'] = before_sort.index
-                start = True
 
-        before_sort.sort_values('rank', ascending=True)
-        after_sort = before_sort[col]
+        after_sort = before_sort.sort_values('rank', ascending=True)
 
-        return after_sort
+        return after_sort[col]
 
     def make_dataframe(self) -> Union[DataFrame, None]:
         data = self._data
@@ -60,7 +57,7 @@ class Table:
         df = self.sort_dataframe(data_frame, list(self.get_ko_col_names().keys()))
         df = df.rename(columns=self.get_ko_col_names())
 
-        return df
+        return df.head(10)
 
     def save_img(self, file_path: str) -> bool:
         df = self.make_dataframe()

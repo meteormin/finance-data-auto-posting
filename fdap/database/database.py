@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, session
 from sqlalchemy.ext.declarative import declarative_base
 from fdap.utils.util import config_json
 
-config = config_json('database')
+config = config_json('database')['mysql']
 
-access_info = 'mysql://{id}:{passwd}@{host}/{db}?charset=utf8'.format(id=config['id'], passwd=config['passwd'],
+access_info = 'mysql://{id}:{passwd}@{host}/{db}?charset=utf8'.format(id=config['id'], passwd=config['password'],
                                                                       host=config['host'], db=config['db'])
 
 engine = create_engine(access_info, convert_unicode=False)

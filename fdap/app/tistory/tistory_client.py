@@ -2,24 +2,23 @@ import selenium.common.exceptions
 import time
 import requests
 from typing import Union
-from fdap.utils.util import make_url, get_query_str_dict, config_json
+from fdap.utils.util import make_url, get_query_str_dict
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from fdap.definitions import ROOT_DIR
-from configparser import SectionProxy
 from fdap.utils.customlogger import CustomLogger
 from fdap.app.contracts.blog_client import *
 from fdap.app.tistory.tistory_data import *
 
 
-class TistoryLogin(BlogEndPoint, BlogLogin):
+class TistoryLogin(BlogLogin):
     _end_point = '/oauth'
 
-    def __init__(self, host: str, config: Union[SectionProxy, dict]):
-        super().__init__(host)
-        self._config = config
+    def __init__(self, host, config: dict):
+        super().__init__(host=host, config=config['webdriver'])
         self._logger = CustomLogger.logger('automatic-posting', __name__)
 
-    def login(self, login_info: LoginInfo):
+    def login(self, login_info: LoginInfo) -> Union[None, dict]:
         res = self._authorize(login_info)
 
         if 'code' in res:
@@ -37,8 +36,8 @@ class TistoryLogin(BlogEndPoint, BlogLogin):
 
         [name, token] = token.split('=')
         self._logger.debug(name + ': ' + token)
-
-        return {name: token}
+        self.access_token = token
+        return {name: self.access_token}
 
     def _access_token(self, req: AccessTokenRequest):
         self._logger.info('request access_token')
@@ -73,7 +72,8 @@ class TistoryLogin(BlogEndPoint, BlogLogin):
 
         web_driver.get(url=url)
         try:
-            element = web_driver.find_element_by_css_selector(self._config['confirm_btn'])
+
+            element = web_driver.find_element(By.CSS_SELECTOR, self._config['confirm_btn'])
             element.click()
             url = web_driver.current_url
         except selenium.common.exceptions.NoSuchElementException as e:
@@ -81,7 +81,7 @@ class TistoryLogin(BlogEndPoint, BlogLogin):
             self._logger.warning(e.msg)
 
         try:
-            web_driver.find_element_by_css_selector(self._config['kakao_login_link']).click()
+            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_login_link']).click()
             self._logger.info('redirect kakao login: ' + web_driver.current_url)
         except selenium.common.exceptions.NoSuchElementException as e:
             self._logger.warning('fail redirect kakao login: ' + web_driver.current_url)
@@ -95,17 +95,17 @@ class TistoryLogin(BlogEndPoint, BlogLogin):
         self._logger.info('sleep 3s')
         time.sleep(3)
         try:
-            web_driver.find_element_by_css_selector(self._config['kakao_email_input']) \
+            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_email_input']) \
                 .send_keys(login_info.kakao_id)
             self._logger.info('input email')
 
             time.sleep(1)
 
-            web_driver.find_element_by_css_selector(self._config['kakao_pass_input']) \
+            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_pass_input']) \
                 .send_keys(login_info.kakao_password)
             self._logger.info('input password')
 
-            web_driver.find_element_by_css_selector(self._config['kakao_login_submit']).click()
+            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_login_submit']).click()
             self._logger.info('submit login form')
             self._logger.info('sleep 3s')
             time.sleep(3)
@@ -113,7 +113,7 @@ class TistoryLogin(BlogEndPoint, BlogLogin):
             self._logger.warning(e.msg)
 
         try:
-            web_driver.find_element_by_css_selector(self._config['confirm_btn']).click()
+            web_driver.find_element(By.CSS_SELECTOR, self._config['confirm_btn']).click()
             self._logger.info('success login: ' + web_driver.current_url)
         except selenium.common.exceptions.NoSuchElementException as e:
             self._logger.warning('fail login: ' + web_driver.current_url)
@@ -126,13 +126,19 @@ class TistoryLogin(BlogEndPoint, BlogLogin):
 
 
 class Post(BlogPost):
+    blog_name: str
     _resource: str = '/post'
+    _user_agent: Dict[str, str] = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36'
+    }
 
-    def __init__(self, host: str, token: str, blog_name: str):
-        super().__init__(host=host)
-        self.access_token = token
-        self.blog_name = blog_name
-        self._logger = CustomLogger.logger('automatic-posting', 'Post')
+    def __init__(self, host: str, config: Dict[str, any]):
+        super().__init__(host=host, config=config['api'])
+        self.blog_name = self._config['blog_name']
+        if self._config['user_agent'] is not None:
+            self._user_agent = {'User-Agent': self._config['user_agent']}
+
+        self._logger = CustomLogger.logger('automatic-posting', __name__)
 
     def list(self, page: int = 1):
         method = self._resource + '/list'
@@ -164,28 +170,37 @@ class Post(BlogPost):
             'output': 'json'
         })
 
-        url = make_url(self.get_host(), method, post_data)
+        url = make_url(self.get_host(), method)
 
-        return self._set_response(requests.post(url))
+        return self._set_response(requests.post(url, data=post_data, headers=self._user_agent))
 
     def modify(self, obj: BlogPostData):
         pass
 
-    def attach(self, filename: str, contents: str):
+    def attach(self, filename: str, contents: bytes):
         method = self._resource + '/attach'
-        files = {filename: contents}
+        files = {'uploadedfile': contents}
         url = make_url(self.get_host(), method, {
             'access_token': self.access_token,
-            'blogName': self.blog_name
+            'blogName': self.blog_name,
+            'output': 'json'
         })
-        return self._set_response(requests.post(url, files=files))
+
+        return self._set_response(requests.post(url, files=files, headers=self._user_agent))
 
 
 class Apis(BlogEndPoint):
+    blog_name: str
     _end_point = '/apis'
     _classes = {
         'post': Post
     }
+
+    def __init__(self, host, config: Dict[str, any]):
+        super().__init__(host, config)
+        for name, cls in self._classes.items():
+            res = cls(host + self._end_point, config)
+            self.set_resource(res.__class__, res)
 
     def set_post(self, post_api: Post):
         self.set_resource(post_api.__class__, post_api)
@@ -196,8 +211,7 @@ class Apis(BlogEndPoint):
 
 
 class TistoryClient(BlogClient):
-    blog_name: str = None
-    access_token: str = None
+    _config: dict
 
     # 의존성 바인딩
     # 정의된 클래스가 아니면 가져올 수 없다.
@@ -207,11 +221,15 @@ class TistoryClient(BlogClient):
         'apis': Apis
     }
 
-    def __init__(self, host: str):
-        super().__init__(host=host)
-        self._config = config_json('tistory')
+    access_token: str = None
+
+    def __init__(self, host: str, config: Dict[str, any]):
+        super().__init__(host=host, config=config)
+        self._config = config
         self._logger = CustomLogger.logger('automatic-posting', __name__)
-        self.blog_name = self._config['api']['blog_name']
+        for name, cls in self._classes.items():
+            end_point = cls(host, config)
+            self.set_end_point(end_point.__class__, end_point)
 
     def set_login(self, login: TistoryLogin):
         return self.set_end_point(login.__class__, login)
@@ -219,10 +237,9 @@ class TistoryClient(BlogClient):
     def login(self, login_info: LoginInfo) -> Union[Dict[str, str], None]:
         login = self.get_end_point(self._classes['login'])
         if isinstance(login, BlogLogin):
-            token = login.login(login_info)
-            if 'access_token' in token:
-                self.access_token = token['access_token']
-                return token
+            login.login(login_info)
+            self.access_token = login.access_token
+            return {'access_token': self.access_token}
         return None
 
     def set_apis(self, apis: Apis):

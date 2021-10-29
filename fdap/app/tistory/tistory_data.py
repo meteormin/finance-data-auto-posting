@@ -26,10 +26,16 @@ class AccessTokenRequest:
 class PostData(BlogPostData):
     title: str
     content: str
-    published: str
-    slogan: str
-    tag: str
-    password: str
+    published: str = None
+    slogan: str = None
+    tag: str = None
+    password: str = None
     visibility: int = 0
     category: int = 0
     acceptComment: int = 1
+
+
+class PostDto(PostData):
+    sector: str = None
+    year: str = None
+    report_code: str = None

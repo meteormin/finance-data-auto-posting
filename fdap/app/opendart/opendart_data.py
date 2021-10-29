@@ -98,7 +98,7 @@ class AcntCollection(Data, BaseCollection):
     def get_by_account_nm(self, account_nm: str, fs_div: str = 'CFS') -> Acnt:
         for item in self._items:
             if fs_div == item.fs_div:
-                if account_nm == item.account_nm:
+                if account_nm.replace(' ', '') in item.account_nm.replace(' ', ''):
                     return item
 
     def to_json(self):

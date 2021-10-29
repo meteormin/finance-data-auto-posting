@@ -1,8 +1,9 @@
-from typing import List, Dict
+from typing import List, Dict, Union
 from fdap.app.opendart.finance_data import FinanceData
 from fdap.app.opendart.opendart_data import AcntCollection
 from fdap.app.contracts.service import Service
 from fdap.app.refine.refine_data import RefineData
+from fdap.app.refine.refine_data import RefineCollection
 from fdap.app.kiwoom.basic_info import BasicInfo
 
 
@@ -18,24 +19,29 @@ class Refine(Service):
         self._refine_data = []
         self._logger.info('init: %s', __name__)
 
-    def refine_multiple(self, basic_info: List[BasicInfo], acnt: Dict[str, AcntCollection]) -> List[RefineData]:
+    def refine_multiple(self, basic_info: List[BasicInfo], acnt: Dict[str, AcntCollection]) -> Union[
+        RefineCollection, List[RefineData]
+    ]:
         self._basic_info = basic_info
         self._acnt = acnt
 
         for stock in basic_info:
-            self._refine_data.append(self.refine_single(stock, acnt[stock.code]))
-        return self.get_refined_data()
+            if stock.code in acnt:
+                self._refine_data.append(self.refine_single(stock, acnt[stock.code]))
+        return RefineCollection(self.get_refined_data())
 
-    @staticmethod
-    def refine_single(basic_info: BasicInfo, acnt: AcntCollection) -> RefineData:
+    def refine_single(self, basic_info: BasicInfo, acnt: AcntCollection) -> RefineData:
         refine_data = RefineData()
 
         refine_data.basic_info = basic_info
 
         finance_data = FinanceData()
         refine_data.finance_data = finance_data.map(acnt)
-        issue_cnt = int((basic_info.capital * 100000000) / basic_info.current_price)
 
+        self._logger.debug('stock_code:{}'.format(basic_info.code))
+        self._logger.debug(finance_data.to_json())
+
+        issue_cnt = int((basic_info.capital * 100000000) / basic_info.current_price)
         refine_data.finance_data.calculate_flow_rate()
         refine_data.finance_data.calculate_debt_rate()
         refine_data.finance_data.calculate_roe()

@@ -1,8 +1,8 @@
 from prototype.handler import Handler
-from os.path import exists
 from fdap.app.refine.refine_data import RefineData
 from fdap.app.opendart.finance_data import FinanceData
 from fdap.app.kiwoom.basic_info import BasicInfo
+from fdap.app.opendart.report_code import ReportCode
 
 
 class Infographic(Handler):
@@ -34,6 +34,15 @@ class Infographic(Handler):
         bi.current_price = 71500
         return bi
 
+    def make(self, sector: str, year: str, report_code: ReportCode) -> dict:
+        self._parameters = {
+            'sector': sector,
+            'year': year,
+            'report_code': report_code
+        }
+
+        return self.handle()
+
     def handle(self):
         from prototype.refine import Refine
         from fdap.app.infographic.table import Table
@@ -45,7 +54,25 @@ class Infographic(Handler):
             'chart': None
         }
 
-        refine_data = Refine(self._save_result).handle()
+        params = self.get_parameters()
+
+        sector = '013'
+        year = '2021'
+        report_code = ReportCode.Q1
+
+        if 'sector' in params:
+            sector = params['sector']
+        if 'year' in params:
+            year = params['year']
+        if 'report_code' in params:
+            report_code = params['report_code']
+
+        refine_data = Refine(save_result=self._save_result, parameters={
+            'sector': sector,
+            'year': year,
+            'report_code': report_code
+        }).handle()
+
         # refine_data = self.get_refine_data()
         table = Table(refine_data)
         table_file_path = ROOT_DIR + '/../prototype/results/infographic-table.png'

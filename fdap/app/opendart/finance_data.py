@@ -46,9 +46,12 @@ class FinanceData(BaseData):
             if account is not None:
                 self.date = account.thstrm_dt
                 self.reprt_code = account.reprt_code
-                self.__setattr__(key, int(account.thstrm_amount.replace(',', '')))
 
-                if account.account_nm == '당기순이익':
+                value = account.thstrm_amount.replace(',', '')
+                if value.isnumeric():
+                    self.__setattr__(key, int(value))
+
+                if '당기순' in account.account_nm.replace(' ', ''):
                     od_service = OpenDartService()
                     corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
 
@@ -71,13 +74,22 @@ class FinanceData(BaseData):
         return self
 
     def calculate_per(self, current_price: int, issue_cnt: int):
-        self.per = round(current_price / (self.net_income / issue_cnt), 2)
+        try:
+            self.per = round(current_price / (self.net_income / issue_cnt), 2)
+        except ZeroDivisionError:
+            self.per = 0.0
         return self
 
     def calculate_pbr(self, current_price: int, issue_cnt: int):
-        self.pbr = round(current_price / ((self.total_capital - self.total_debt) / issue_cnt), 2)
+        try:
+            self.pbr = round(current_price / ((self.total_capital - self.total_debt) / issue_cnt), 2)
+        except ZeroDivisionError:
+            self.pbr = 0.0
         return self
 
     def calculate_roe(self):
-        self.roe = round((self.net_income / self.total_capital) * 100, 2)
+        try:
+            self.roe = round((self.net_income / self.total_capital) * 100, 2)
+        except ZeroDivisionError:
+            self.roe = 0.0
         return self

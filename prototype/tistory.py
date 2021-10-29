@@ -1,33 +1,29 @@
 from prototype.handler import Handler
+from fdap.app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
+from fdap.utils.util import config_json
 
 
 class Tistory(Handler):
     TAG: str = 'tistory'
+    client: TistoryClient
 
     def handle(self):
-        login = self._login()
-        _list = self._list(login['access_token'])
+        login = self.login()
+        _list = self.list(login['access_token'])
 
         return {
             'login': login,
             'list': _list
         }
 
-    def _login(self):
+    def login(self):
         self.TAG += '-login'
-        from fdap.app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
-        from fdap.utils.util import config_json
 
         config = config_json('tistory')
         api_config = config['api']
         kakao_config = config['kakao']
-        webdriver_config = config['webdriver']
 
-        client = TistoryClient(api_config['url']).set_login(
-            TistoryLogin(
-                api_config['url'],
-                webdriver_config
-            ))
+        self.client = TistoryClient(api_config['url'], config)
 
         login_info = LoginInfo(
             client_id=api_config['client_id'],
@@ -39,26 +35,21 @@ class Tistory(Handler):
             state=api_config['state']
         )
 
-        client.login(login_info)
+        self.client.login(login_info)
 
-        return {'access_token': client.access_token}
+        return {'access_token': self.client.access_token}
 
-    def _list(self, access_token: str):
+    def list(self, access_token: str):
         self.TAG += '-list'
-        from fdap.definitions import CONFIG_PATH
-        from fdap.app.tistory.tistory_client import Apis, TistoryClient, Post
-        from configparser import ConfigParser
+        from fdap.app.tistory.tistory_client import TistoryClient
+        from fdap.utils.util import config_json
 
-        config = ConfigParser()
-        config.read(CONFIG_PATH + '/tistory.ini')
+        config = config_json('tistory')
         api_config = config['api']
-        kakao_config = config['kakao']
-        webdriver_config = config['webdriver']
 
-        client = TistoryClient(api_config['url']).set_apis(
-            Apis().set_post(Post(api_config['url'], access_token, api_config['blog_name']))
-        )
-
-        res = client.apis().post().list()
+        client = TistoryClient(api_config['url'], config)
+        post = client.apis().post()
+        post.access_token = access_token
+        res = post.list()
 
         return res

@@ -14,6 +14,12 @@ class ReportCode(Enum):
                 return v
 
     @classmethod
+    def get_index(cls, q: str):
+        for idx, v in enumerate(cls.__members__.values()):
+            if v.value == q:
+                return idx + 1
+
+    @classmethod
     def sub(cls, quarter: str, sub_num: int):
         has_attr = False
         for q in cls.__members__.values():

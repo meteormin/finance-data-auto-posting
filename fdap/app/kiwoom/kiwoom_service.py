@@ -47,8 +47,8 @@ class KiwoomService(Service):
     def get_sector_list(self):
         return self._koapy_wrapper.get_sector_list()
 
-    def get_stock_list_by_sector(self, sector: str) -> List[BasicInfo]:
-        stock_info = self._koapy_wrapper.get_stock_info_by_sector_as_list(sector)
+    def get_stock_list_by_sector(self, sector: str, market_code: str = '0') -> List[BasicInfo]:
+        stock_info = self._koapy_wrapper.get_stock_info_by_sector_as_list(sector, market_code)
         rs_list = []
         for info in stock_info:
             basic = self._koapy_wrapper.get_stock_basic_info_as_dict(info.code)

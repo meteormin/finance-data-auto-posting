@@ -18,11 +18,15 @@ class KoapyWrapper:
         self._logger = CustomLogger.logger('automatic-posting', __name__)
         self._logger.info('init: %s', __name__)
         self._logger.info('Auto Login')
-        self._koapy.EnsureConnected()
+        self.connect()
         self._logger.info('Success Login')
 
+    def __del__(self):
+        self._koapy.close()
+
     def connect(self):
-        self._koapy.EnsureConnected()
+        if not self.get_connect_state():
+            self._koapy.EnsureConnected()
 
     def get_connect_state(self):
         """can you check login

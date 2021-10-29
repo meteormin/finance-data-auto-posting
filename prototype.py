@@ -18,7 +18,7 @@ def main(name, save):
     if exists('{package}/{name}.py'.format(package=package_name, name=name)):
         package = importlib.import_module(package_name)
         module = importlib.import_module('{package}.{name}'.format(package=package_name, name=name))
-        _class = getattr(module, camel(name))(save)
+        _class = getattr(module, camel(name))(save_result=save)
         if isinstance(_class, Handler):
             _class.run()
         else:

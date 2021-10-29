@@ -22,16 +22,17 @@ def camel(s: str):
     return s.title().replace('_', '')
 
 
-def make_url(host, method: str, parameters: dict):
+def make_url(host, method: str, parameters: dict = None):
     url = host + method
     count = 0
     query_str = ''
-    for key, value in parameters.items():
-        if count == 0:
-            query_str = '?{0}={1}'.format(key, value)
-        else:
-            query_str += '&{0}={1}'.format(key, value)
-        count += 1
+    if parameters is not None:
+        for key, value in parameters.items():
+            if count == 0:
+                query_str = '?{0}={1}'.format(key, value)
+            else:
+                query_str += '&{0}={1}'.format(key, value)
+            count += 1
 
     return url + query_str
 

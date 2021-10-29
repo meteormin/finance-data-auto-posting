@@ -15,10 +15,16 @@ class Handler(ABC):
     output_format: str = '{datetime} - {name} - {level} - {message}'
     _logger: LoggerAdapter
     _save_result: bool
+    _parameters: dict = {}
 
-    def __init__(self, save_result: bool = False):
+    def __init__(self, parameters: dict = None, save_result: bool = False):
+        if parameters is not None:
+            self._parameters = parameters
         self._logger = CustomLogger().logger('test', self.TAG)
         self._save_result = save_result
+
+    def get_parameters(self) -> dict:
+        return self._parameters
 
     def run(self):
         try:

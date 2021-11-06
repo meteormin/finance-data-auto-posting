@@ -14,6 +14,12 @@ class ReportCode(Enum):
                 return v
 
     @classmethod
+    def get_by_index(cls, i: int):
+        for k, v in enumerate(cls.__members__.values()):
+            if k + 1 == i:
+                return v
+
+    @classmethod
     def get_index(cls, q: str):
         for idx, v in enumerate(cls.__members__.values()):
             if v.value == q:

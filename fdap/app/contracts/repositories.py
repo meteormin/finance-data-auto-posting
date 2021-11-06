@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from fdap.utils.data import BaseData
-from typing import Union
+from typing import Union, Dict
 
 """
 Abstract Repositories
@@ -22,6 +22,10 @@ class Repository(ABC):
         pass
 
     @abstractmethod
+    def find_by_attribute(self, attr: Dict[str, any]):
+        pass
+
+    @abstractmethod
     def update(self, identifier: Union[str, int], data: BaseData):
         pass
 
@@ -31,7 +35,8 @@ class Repository(ABC):
 
 
 class PostsRepository(Repository, ABC):
-    pass
+    def last(self):
+        pass
 
 
 class UploadedRepository(Repository, ABC):

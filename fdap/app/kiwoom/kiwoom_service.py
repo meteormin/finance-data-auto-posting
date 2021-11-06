@@ -2,7 +2,7 @@ import subprocess
 from os.path import exists
 from fdap.app.kiwoom.koapy_wrapper import KoapyWrapper
 from pyhocon import ConfigFactory, HOCONConverter
-from typing import List
+from typing import List, Dict
 from fdap.app.kiwoom.basic_info import BasicInfo
 from fdap.utils.util import config_json
 from fdap.definitions import APP_PATH
@@ -44,7 +44,7 @@ class KiwoomService(Service):
         self._koapy_wrapper = KoapyWrapper()
         self._logger.info('init:' + __name__)
 
-    def get_sector_list(self):
+    def get_sector_list(self) -> List[Dict[str, any]]:
         return self._koapy_wrapper.get_sector_list()
 
     def get_stock_list_by_sector(self, sector: str, market_code: str = '0') -> List[BasicInfo]:
@@ -58,3 +58,6 @@ class KiwoomService(Service):
 
     def get_stock(self, stock_code):
         return self._koapy_wrapper.get_stock_basic_info_as_dict(stock_code)
+
+    def disconnect(self):
+        self._koapy_wrapper.disconnect()

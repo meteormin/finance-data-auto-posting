@@ -14,7 +14,9 @@ from fdap.app.tistory.tistory_data import PostData
 from fdap.app.tistory.tistory_data import PostDto
 from fdap.utils.util import config_json
 from fdap.app.tistory.tistory_data import LoginInfo
-from typing import Dict, Union
+from fdap.app.autopost.parameters import Parameters
+from fdap.app.autopost.rotation import RotationSector
+from typing import Dict, Union, List
 import os
 
 
@@ -53,6 +55,7 @@ class AutoPost(Service):
         self.tistory.apis().post().access_token = self.tistory.access_token
 
     def make_data(self, sector: str, year: str, q: ReportCode):
+        self._logger.debug('make_data')
         stock_list = self.kiwoom.get_stock_list_by_sector(sector)
 
         corp_codes = []
@@ -69,6 +72,7 @@ class AutoPost(Service):
         df = table.make_dataframe()
 
         if df is None:
+            self._logger.debug('make_data is None')
             return None
 
         table_file_path = os.path.join(RESOURCE_PATH, f'{sector}_{year}_{q}_table.png')
@@ -96,29 +100,31 @@ class AutoPost(Service):
             res = self.tistory.apis().post().attach(filename, contents)
             return res['tistory']['url']
 
-    def post(self, upload_files: Dict[str, Union[str, list]]) -> dict:
+    def post(self, upload_files: Dict[str, Union[str, Union[str, dict]]]) -> dict:
+        self._logger.debug('ready for post')
         img_url = {
             'table': None,
-            'chart': []
+            'chart': {}
         }
         if 'table' in upload_files:
             table = upload_files['table']
             img_url['table'] = self._upload_file(table)
 
         if 'chart' in upload_files:
-            chart_list = upload_files['chart']
-            for chart in chart_list:
-                img_url['chart'].append(self._upload_file(chart))
+            chart_dict = upload_files['chart']
+            for ko, chart in chart_dict.items():
+                img_url['chart'][ko] = self._upload_file(chart)
 
         return img_url
 
-    def auto(self):
-        sector_name = '전기전자'
-        sector = '013'
-        year = '2021'
-        report_code = ReportCode.Q1
+    def run(self, parameters: Parameters):
+        sector_name = parameters.sector_name
+        sector = parameters.sector_code
+        year = parameters.year
+        report_code = ReportCode.get_by_index(parameters.quarter)
 
         exist_post = self.repo.find_by_sector(sector, year, report_code.value)
+        self._logger.debug(exist_post)
         if exist_post:
             return None
 
@@ -141,7 +147,17 @@ class AutoPost(Service):
         post_dto = PostDto(title=subject, content=contents)
         post_dto.sector = sector
         post_dto.report_code = report_code
-        post_dto.year = year
+        post_dto.post_year = year
 
         self.repo.create(post_dto)
         return self.tistory.apis().post().write(post)
+
+    @staticmethod
+    def auto_set(rotator: RotationSector) -> Parameters:
+        pass
+
+    def auto(self, sector_list: List[dict], rules: dict = None):
+        rotator = RotationSector(self.repo, sector_list, rules)
+        parameter = self.auto_set(rotator)
+
+        return self.run(parameter)

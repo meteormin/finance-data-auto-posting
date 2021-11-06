@@ -1,5 +1,5 @@
 def make_template(sector: str, year: str, q: str):
-    return f'{sector}: {year}년도 {q}분기'
+    return f'[업종: {sector}] {year}년도 {q}분기'
 
 
 def make_img_tag(name: str, src: str):

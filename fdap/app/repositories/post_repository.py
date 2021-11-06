@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, Dict
 from sqlalchemy.orm import scoped_session
+from sqlalchemy import desc
 from fdap.app.contracts.repositories import PostsRepository as Repo
 from fdap.app.tistory.tistory_data import PostDto
 from fdap.database.models import Posts
@@ -23,6 +24,10 @@ class PostsRepository(Repo):
         query = self._session.query(Posts)
         return query.all()
 
+    def last(self):
+        query = self._session.query(Posts)
+        return query.order_by(desc(Posts.post_id)).first()
+
     def create(self, data: PostDto):
         if isinstance(data, PostDto):
             entity = Posts()
@@ -41,8 +46,11 @@ class PostsRepository(Repo):
     def find(self, identifier: Union[str, int]) -> Posts:
         return self._session.query(Posts).get(identifier)
 
+    def find_by_attribute(self, attr: Dict[str, any]):
+        return self._session.query(Posts).filter_by(**attr).all()
+
     def find_by_sector(self, sector: str, year: str, q: str):
-        return self._session.query(Posts).get(post_sector=sector, post_year=year, report_code=q)
+        return self._session.query(Posts).filter_by(post_sector=sector, post_year=year, report_code=q).all()
 
     def update(self, identifier: Union[str, int], data: PostDto):
         entity = self.find(identifier)

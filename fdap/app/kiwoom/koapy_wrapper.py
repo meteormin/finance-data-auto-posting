@@ -22,11 +22,15 @@ class KoapyWrapper:
         self._logger.info('Success Login')
 
     def __del__(self):
-        self._koapy.close()
+        self.disconnect()
 
     def connect(self):
         if not self.get_connect_state():
             self._koapy.EnsureConnected()
+
+    def disconnect(self):
+        if self.get_connect_state():
+            self._koapy.close()
 
     def get_connect_state(self):
         """can you check login

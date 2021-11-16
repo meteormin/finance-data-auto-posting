@@ -1,5 +1,6 @@
 from fdap.utils.util import object_to_json
 from fdap.app.contracts.jsonable import Jsonable
+import json
 
 
 class BaseData(Jsonable):
@@ -10,6 +11,9 @@ class BaseData(Jsonable):
 
 class BaseCollection(Jsonable):
     _items: list
+
+    def count(self):
+        return len(self._items)
 
     def push(self, item: BaseData):
         self._items.append(BaseData)
@@ -31,7 +35,11 @@ class BaseCollection(Jsonable):
     def all(self):
         return self._items
 
-    def to_json(self):
-        json_list = []
+    def to_dict(self):
+        dict_list = []
         for item in self._items:
-            json_list.append(item.__dict__)
+            dict_list.append(item.__dict__)
+        return dict_list
+
+    def to_json(self):
+        return json.dumps(self.to_dict(), indent=2, ensure_ascii=False, sort_keys=True)

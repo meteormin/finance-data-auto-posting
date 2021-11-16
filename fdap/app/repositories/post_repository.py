@@ -33,9 +33,13 @@ class PostsRepository(Repo):
             entity = Posts()
             entity.post_subject = data.title
             entity.post_contents = data.content
+            entity.post_year = data.year
             entity.post_sector = data.sector
+            entity.report_code = data.report_code
             entity.post_category = data.category
             entity.post_tags = data.tag
+            entity.post_url = data.url
+            entity.is_success = data.is_success
             entity.created_at = datetime.now()
 
             self._session.add(entity)

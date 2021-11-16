@@ -16,7 +16,6 @@ class Chart:
     @staticmethod
     def get_ko_col_names() -> dict:
         return {
-            'rank': '순위',
             'stock_code': '종목코드',
             'stock_name': '종목명',
             'current_price': '현재가',

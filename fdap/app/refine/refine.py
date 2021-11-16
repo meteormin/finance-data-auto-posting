@@ -39,7 +39,6 @@ class Refine(Service):
         refine_data.finance_data = finance_data.map(acnt)
 
         self._logger.debug('stock_code:{}'.format(basic_info.code))
-        self._logger.debug(finance_data.to_json())
 
         issue_cnt = int((basic_info.capital * 100000000) / basic_info.current_price)
         refine_data.finance_data.calculate_flow_rate()

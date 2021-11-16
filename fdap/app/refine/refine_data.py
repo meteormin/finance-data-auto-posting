@@ -28,45 +28,52 @@ class RefineData(BaseData, TableData):
         }
 
     def sort_attr(self) -> dict:
+        # return {
+        #     'market_cap': self.DESC,
+        #     'deficit_count': self.ASC,
+        #     'per': self.ASC,
+        #     'pbr': self.ASC,
+        #     'roe': self.DESC,
+        #     'flow_rate': self.DESC,
+        #     'debt_rate': self.ASC
+        # }
+
         return {
-            'market_cap': self.DESC,
-            'deficit_count': self.ASC,
-            'per': self.ASC,
-            'pbr': self.ASC,
-            'roe': self.DESC,
-            'flow_rate': self.DESC,
-            'debt_rate': self.ASC
+            'market_cap': self.DESC
         }
 
 
 class RefineCollection(BaseCollection, TableData):
     ASC = True
     DESC = False
-
-    _item: List[RefineData]
+    _items: List[RefineData]
 
     def __init__(self, refine_list: List[RefineData]):
-        self._item = refine_list
+        self._items = refine_list
 
     def push(self, item: RefineData):
-        self._item.append(item)
+        self._items.append(item)
         return self
 
     def to_dict(self) -> List[dict]:
         rs_list = []
-        for item in self._item:
+        for item in self._items:
             if isinstance(item, RefineData):
                 rs_list.append(item.to_dict())
 
         return rs_list
 
     def sort_attr(self) -> dict:
+        # return {
+        #     'market_cap': self.DESC,
+        #     'deficit_count': self.ASC,
+        #     'per': self.ASC,
+        #     'pbr': self.ASC,
+        #     'roe': self.DESC,
+        #     'flow_rate': self.DESC,
+        #     'debt_rate': self.ASC
+        # }
+
         return {
-            'market_cap': self.DESC,
-            'deficit_count': self.ASC,
-            'per': self.ASC,
-            'pbr': self.ASC,
-            'roe': self.DESC,
-            'flow_rate': self.DESC,
-            'debt_rate': self.ASC
+            'market_cap': self.DESC
         }

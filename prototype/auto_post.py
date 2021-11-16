@@ -1,5 +1,4 @@
 from prototype.handler import Handler
-from fdap.app.autopost.parameters import Parameters
 from fdap.app.autopost.autopost import AutoPost as Module
 from fdap.app.kiwoom.kiwoom_service import KiwoomService
 from fdap.app.opendart.opendart_service import OpenDartService
@@ -42,15 +41,8 @@ class AutoPost(Handler):
     def handle(self):
         module = self.make_module()
 
-        parameters = Parameters(
-            sector_name='건설업',
-            sector_code='018',
-            year='2021',
-            quarter=1
-        )
+        result = module.auto()
+        # kiwoom api 연결 종료를 위해...
+        module.close()
 
-        result = module.run(parameters)
-
-        # kiwoom api 연결 종료
-        module.kiwoom.disconnect()
         return result

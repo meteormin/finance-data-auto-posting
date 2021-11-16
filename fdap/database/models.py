@@ -13,7 +13,7 @@ class Posts(Base):
     post_year = Column(String(4), nullable=False)
     report_code = Column(String(10), nullable=False)
     is_success = Column(Boolean, nullable=False, default=False)
-    post_url = Column(String(255), nullable=False)
+    post_url = Column(String(255), nullable=True)
     created_at = Column(TIMESTAMP, nullable=True)
 
     def __repr__(self):

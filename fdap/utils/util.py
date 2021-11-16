@@ -1,9 +1,10 @@
 import re
 import json
+import ctypes
+from datetime import datetime
 from typing import Dict
 from configparser import ConfigParser
 from fdap.definitions import CONFIG_PATH
-import ctypes
 
 
 def snake(s: str):
@@ -71,3 +72,25 @@ def is_admin():
         return ctypes.windll.shell32.IsUserAnAdmin()
     except(Exception,):
         return False
+
+
+def get_quarter(date: datetime):
+    if date.month < 4:
+        quarter = 1
+    elif date.month < 7:
+        quarter = 2
+    elif date.month < 10:
+        quarter = 3
+    elif date.month <= 12:
+        quarter = 4
+    else:
+        quarter = 0
+
+    return quarter
+
+
+def currency_to_int(currency: str) -> int:
+    numeric = currency.replace(',', '')
+    if numeric.strip('-').isnumeric():
+        return int(numeric)
+    return 0

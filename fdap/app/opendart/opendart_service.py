@@ -2,10 +2,10 @@ import xmltodict
 import os
 from fdap.app.opendart.opendart_client import OpenDartClient
 from fdap.app.opendart.opendart_data import *
-from fdap.utils.util import config_json
+from fdap.utils.util import config_json, currency_to_int
 from fdap.app.opendart.report_code import ReportCode
-from typing import List, Dict, Union
 from fdap.app.contracts.service import Service
+from typing import List, Dict, Union
 from configparser import ConfigParser
 
 
@@ -70,6 +70,7 @@ class OpenDartService(Service):
         single_acnt = self._client.get_single(corp_code, year, report_code.value)
         if self._client.is_success():
             self._logger.debug('success request')
+            self._logger.debug('corp_code: ' + corp_code)
         else:
             self._logger.warning('fail request: %s', self._client.get_error())
 
@@ -85,6 +86,7 @@ class OpenDartService(Service):
         multi_acnt = self._client.get_multi(corp_codes, year, report_code.value)
         if self._client.is_success():
             self._logger.debug('success request')
+            self._logger.debug('corp_codes' + str(corp_codes))
         else:
             self._logger.warning('fail request: %s', self._client.get_error())
 
@@ -95,7 +97,7 @@ class OpenDartService(Service):
 
         return multi
 
-    def get_deficit_count(self, corp_code, year: str, count: int = 3):
+    def get_deficit_count(self, corp_code: str, year: str, count: int = 3):
         deficit_count = 0
         for i in range(count):
             for q in self.QUARTERS.values():
@@ -105,7 +107,7 @@ class OpenDartService(Service):
                         account = acnt_collect.get_by_account_nm('당기순')
                         if account is not None:
                             if account.thstrm_amount is not None:
-                                if int(account.thstrm_amount) < 0:
+                                if currency_to_int(account.thstrm_amount) < 0:
                                     deficit_count += 1
         return deficit_count
 

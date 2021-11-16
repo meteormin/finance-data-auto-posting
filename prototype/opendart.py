@@ -1,6 +1,7 @@
 from prototype.handler import Handler
 from fdap.app.kiwoom.basic_info import BasicInfo
 from fdap.app.opendart.report_code import ReportCode
+from fdap.definitions import ROOT_DIR
 
 
 class Opendart(Handler):
@@ -8,6 +9,8 @@ class Opendart(Handler):
 
     def handle(self):
         from fdap.app.opendart.opendart_service import OpenDartService
+        from pandas import DataFrame
+
         params = self.get_parameters()
         stock_code = None
         stock_info = None
@@ -26,6 +29,8 @@ class Opendart(Handler):
 
         if 'report_code' in params:
             report_code = params['report_code']
+            if isinstance(report_code, str):
+                report_code = ReportCode.get_by_str(report_code)
         else:
             report_code = ReportCode.Q1
 
@@ -44,5 +49,9 @@ class Opendart(Handler):
                         corp_codes.append(corp_code.corp_code)
 
             collect = service.get_multi(corp_codes, year, report_code)
+
+        for stock, c in collect.items():
+            df = DataFrame.from_records(c.to_dict())
+            df.to_excel(ROOT_DIR + '/../prototype/results/' + stock + '.xlsx')
 
         return collect

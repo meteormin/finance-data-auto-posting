@@ -30,6 +30,7 @@ class KoapyWrapper:
 
     def disconnect(self):
         if self.get_connect_state():
+            self._logger.debug('close Koapy')
             self._koapy.close()
 
     def get_connect_state(self):

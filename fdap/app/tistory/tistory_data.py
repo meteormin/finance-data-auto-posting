@@ -39,3 +39,5 @@ class PostDto(PostData):
     sector: str = None
     year: str = None
     report_code: str = None
+    url: str = None
+    is_success: bool = False

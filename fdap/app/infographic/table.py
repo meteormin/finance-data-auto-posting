@@ -17,7 +17,6 @@ class Table:
     @staticmethod
     def get_ko_col_names() -> dict:
         return {
-            'rank': '순위',
             'stock_code': '종목코드',
             'stock_name': '종목명',
             'current_price': '현재가',
@@ -30,12 +29,16 @@ class Table:
             'debt_rate': '부채비율'
         }
 
-    def sort_dataframe(self, df: DataFrame, col: list) -> Union[DataFrame, None]:
+    def sort_dataframe(self, df: DataFrame, col: list) -> DataFrame:
         before_sort = df
         data = self._data
 
+        if df.empty:
+            return df
+
         for attr, priority in data.sort_attr().items():
-            before_sort = before_sort.sort_values(attr, ascending=priority)
+            if attr in before_sort:
+                before_sort = before_sort.sort_values(attr, ascending=priority)
             if 'rank' in before_sort:
                 before_sort['rank'] += before_sort.index
             else:
@@ -54,7 +57,11 @@ class Table:
             data_frame = DataFrame.from_records([data.to_dict()])
         else:
             return None
+
         df = self.sort_dataframe(data_frame, list(self.get_ko_col_names().keys()))
+        if df.empty:
+            return None
+
         df = df.rename(columns=self.get_ko_col_names())
 
         return df.head(10)

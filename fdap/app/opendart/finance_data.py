@@ -3,6 +3,8 @@ from fdap.app.opendart.opendart_service import OpenDartService
 from fdap.utils.data import BaseData
 from typing import Dict
 from fdap.app.opendart.opendart_data import AcntCollection
+from fdap.utils.customlogger import CustomLogger
+from fdap.utils.util import currency_to_int
 
 
 @dataclasses.dataclass
@@ -42,41 +44,50 @@ class FinanceData(BaseData):
         :return FinanceData:
         """
         for key, name in self.get_map_table()['account_nm'].items():
-            account = acnt.get_by_account_nm(name)
-            if account is not None:
-                self.date = account.thstrm_dt
-                self.reprt_code = account.reprt_code
+            account = acnt.get_by_account_nm(account_nm=name, fs_div='CFS')
+            if account is None:
+                account = acnt.get_by_account_nm(account_nm=name, fs_div='OFS')
 
-                value = account.thstrm_amount.replace(',', '')
-                if value.isnumeric():
-                    self.__setattr__(key, int(value))
+            self.date = account.thstrm_dt
+            self.reprt_code = account.reprt_code
+            self.__setattr__(key, currency_to_int(account.thstrm_amount))
 
-                if '당기순' in account.account_nm.replace(' ', ''):
-                    od_service = OpenDartService()
-                    corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
+            if '당기순' in account.account_nm.replace(' ', ''):
+                od_service = OpenDartService()
+                corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
 
-                    self.deficit_count = od_service.get_deficit_count(corp_code, account.bsns_year)
+                self.deficit_count = od_service.get_deficit_count(corp_code.corp_code, account.bsns_year)
 
         return self
 
+    @staticmethod
+    def __logger():
+        return CustomLogger.logger('automatic-posting', __name__)
+
     def calculate_flow_rate(self):
-        if self.floating_debt == 0:
-            self.flow_rate = 0
-            return
-        self.flow_rate = round(self.current_assets / self.floating_debt * 100, 2)
+        try:
+            self.flow_rate = round(self.current_assets / self.floating_debt * 100, 2)
+        except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug('flow_rate:{} / {} * 100'.format(self.current_assets, self.floating_debt))
+            self.flow_rate = 0.0
         return self
 
     def calculate_debt_rate(self):
-        if self.total_assets == 0:
-            self.flow_rate = 0
-            return self
-        self.debt_rate = round(self.total_debt / self.total_assets * 100, 2)
+        try:
+            self.debt_rate = round(self.total_debt / self.total_assets * 100, 2)
+        except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug('debt_rate:{} / {} * 100'.format(self.total_debt, self.total_assets))
+            self.debt_rate = 0.0
         return self
 
     def calculate_per(self, current_price: int, issue_cnt: int):
         try:
             self.per = round(current_price / (self.net_income / issue_cnt), 2)
         except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug('per:{} / ({} / {})'.format(current_price, self.net_income, issue_cnt))
             self.per = 0.0
         return self
 
@@ -84,6 +95,9 @@ class FinanceData(BaseData):
         try:
             self.pbr = round(current_price / ((self.total_capital - self.total_debt) / issue_cnt), 2)
         except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug(
+                'per:{} / (({} - {}) / {})'.format(current_price, self.total_capital, self.total_debt, issue_cnt))
             self.pbr = 0.0
         return self
 
@@ -91,5 +105,8 @@ class FinanceData(BaseData):
         try:
             self.roe = round((self.net_income / self.total_capital) * 100, 2)
         except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug(
+                'per:({} / {}) * 100'.format(self.net_income, self.total_capital))
             self.roe = 0.0
         return self

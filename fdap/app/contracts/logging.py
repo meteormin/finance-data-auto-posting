@@ -1,9 +1,8 @@
-from abc import ABC
 from fdap.utils.loggeradapter import LoggerAdapter
 from fdap.utils.customlogger import CustomLogger
 
 
-class Logging(ABC):
+class Logging:
     _logger: LoggerAdapter
     _TAG: str = None
     _LOGGER_NAME: str = 'automatic-posting'

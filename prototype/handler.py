@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
+from fdap.utils.util import object_to_json
 from fdap.utils.loggeradapter import LoggerAdapter
 from fdap.utils.customlogger import CustomLogger
 from datetime import datetime
 from fdap.app.contracts.jsonable import Jsonable
 from fdap.definitions import ROOT_DIR
+from os.path import exists
 import traceback
 import json
-from os.path import exists
+
 import os
 
 
@@ -71,6 +73,8 @@ class Handler(ABC):
                 f.write(result)
             elif isinstance(result, Jsonable):
                 f.write(result.to_json())
+            elif isinstance(result, object):
+                f.write(object_to_json(result))
             else:
                 f.write(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
 

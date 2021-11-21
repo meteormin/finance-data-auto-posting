@@ -36,7 +36,7 @@ class OpenDartClient(Client):
             'bsns_year': year,
             'reprt_code': report_code
         })
-
+        self._logger.debug('request url: {}'.format(url))
         return self._set_response(requests.get(url))
 
     def get_multi(self, corp_codes: list, year: str, report_code: str):

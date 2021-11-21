@@ -48,15 +48,16 @@ class FinanceData(BaseData):
             if account is None:
                 account = acnt.get_by_account_nm(account_nm=name, fs_div='OFS')
 
-            self.date = account.thstrm_dt
-            self.reprt_code = account.reprt_code
-            self.__setattr__(key, currency_to_int(account.thstrm_amount))
+            if account is not None:
+                self.date = account.thstrm_dt
+                self.reprt_code = account.reprt_code
+                self.__setattr__(key, currency_to_int(account.thstrm_amount))
 
-            if '당기순' in account.account_nm.replace(' ', ''):
-                od_service = OpenDartService()
-                corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
+                if '당기순' in account.account_nm.replace(' ', ''):
+                    od_service = OpenDartService()
+                    corp_code = od_service.get_corp_code_by_stock_code(account.stock_code)
 
-                self.deficit_count = od_service.get_deficit_count(corp_code.corp_code, account.bsns_year)
+                    self.deficit_count = od_service.get_deficit_count(corp_code.corp_code, account.bsns_year)
 
         return self
 

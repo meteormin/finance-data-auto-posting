@@ -1,9 +1,10 @@
 import requests
 import json
 from typing import Union
+from fdap.app.contracts.logging import Logging
 
 
-class Client:
+class Client(Logging):
     """
     requests wrapper
     """
@@ -14,6 +15,7 @@ class Client:
         Args:
             host(str): 요청할 웹 서버의 호스트정보(URL), ex) https://www.example.com
         """
+        super().__init__()
         self._host = host
         self._response = None
         self._error = {}

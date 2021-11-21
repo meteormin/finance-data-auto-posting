@@ -67,6 +67,7 @@ class OpenDartService(Service):
 
     def get_single(self, corp_code: str, year: str, report_code: ReportCode) -> Union[Dict[str, AcntCollection], None]:
         self._logger.debug('request get single corp accounts')
+        self._logger.debug(f"corp_code: {corp_code}, year: {year}, report_code: {report_code.value}")
         single_acnt = self._client.get_single(corp_code, year, report_code.value)
         if self._client.is_success():
             self._logger.debug('success request')
@@ -79,22 +80,27 @@ class OpenDartService(Service):
             if 'list' in single_acnt:
                 single = self._div_by_stock(Acnt().map_list(single_acnt['list']))
 
+        if single is None:
+            max_count = 8
+            count = 0
+            while count < max_count:
+                re_rc = ReportCode.sub(report_code.value, 1)
+                if ReportCode.Q4 == re_rc:
+                    re_year = int(year) - 1
+                else:
+                    re_year = year
+                single = self.get_single(corp_code, str(re_year), re_rc)
+                if single is not None:
+                    return single
+                count += 1
+
         return single
 
     def get_multi(self, corp_codes: list, year: str, report_code: ReportCode) -> Dict[str, AcntCollection]:
         self._logger.debug('request get multiple corp accounts')
-        multi_acnt = self._client.get_multi(corp_codes, year, report_code.value)
-        if self._client.is_success():
-            self._logger.debug('success request')
-            self._logger.debug('corp_codes' + str(corp_codes))
-        else:
-            self._logger.warning('fail request: %s', self._client.get_error())
-
         multi = {}
-        if isinstance(multi_acnt, dict):
-            if 'list' in multi_acnt:
-                multi = self._div_by_stock(Acnt().map_list(multi_acnt['list']))
-
+        for corp_code in corp_codes:
+            multi.update(self.get_single(corp_code, year, report_code))
         return multi
 
     def get_deficit_count(self, corp_code: str, year: str, count: int = 3):

@@ -39,13 +39,13 @@ class Table:
         for attr, priority in data.sort_attr().items():
             if attr in before_sort:
                 before_sort = before_sort.sort_values(attr, ascending=priority)
-            if 'rank' in before_sort:
-                before_sort['rank'] += before_sort.index
-            else:
-                before_sort['rank'] = before_sort.index
-
-        after_sort = before_sort.sort_values('rank', ascending=True)
-
+        #     if 'rank' in before_sort:
+        #         before_sort['rank'] += before_sort.index
+        #     else:
+        #         before_sort['rank'] = before_sort.index
+        #
+        # after_sort = before_sort.sort_values('rank', ascending=True)
+        after_sort = before_sort
         return after_sort[col]
 
     def make_dataframe(self) -> Union[DataFrame, None]:

@@ -1,4 +1,4 @@
-from prototype.handler import Handler
+from fdap.prototype.handler import Handler
 
 
 class Kiwoom(Handler):

@@ -1,22 +1,19 @@
 import json
 
-from prototype.handler import Handler
+from fdap.prototype.handler import Handler
 from fdap.app.tistory.tistory_client import PostData
-from fdap.utils.util import config_json
 
 
 class Main(Handler):
     TAG: str = 'main'
 
     def handle(self):
-        from prototype.tistory import Tistory
-        from prototype.infographic import Infographic
-        from fdap.app.opendart.report_code import ReportCode
+        from fdap.prototype.tistory import Tistory
         import os
         from fdap.definitions import ROOT_DIR
 
         # infographic = Infographic().make('013', '2021', ReportCode.Q1)
-        with open(os.path.join(ROOT_DIR, '../prototype/results/infographic.json'), 'r', encoding='utf-8') as f:
+        with open(os.path.join(ROOT_DIR, 'results/infographic.json'), 'r', encoding='utf-8') as f:
             infographic = json.load(f)
 
         tistory = Tistory(save_result=self._save_result)

@@ -3,6 +3,26 @@
 > ~~alpha 버전 완료 일정: 2021.10.27~~
 > alpha 버전 완료: 2021.10.30
 
+## v2.1.0
+
+### 2021.12.05
+
+**fix**
+
+Koapy Wrapper 관련
+
+- 특정 업종(count 100이상) 종목 정보 조회 하지 못하는 이슈 해결
+    - count 만큼만 반복하고 break로 빠져나온다.
+
+**feat**
+
+장고 Admin 페이지 추가
+
+- posts 조회
+- 로그 조회
+- 설정 조회
+- 설정 등록 및 수정(테스트 필요!)
+
 ## v2.0.3
 
 ### 2021.11.21
@@ -96,7 +116,7 @@ DB 연동을 위한 준비
 - fdap/app/infographic/chart.py
     - 차트 이미지 저장
 - 변경사항 infographic 프로토타입 모듈 반영 및 테스트 완료
-    - [프로토타입 결과](./prototype/results)
+    - [프로토타입 결과](fdap/prototype/results)
 
 ## v2.0-alpha.6
 

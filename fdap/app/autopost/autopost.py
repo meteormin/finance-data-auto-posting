@@ -136,7 +136,7 @@ class AutoPost(Service):
 
         return img_url
 
-    def run(self, parameters: Parameters) -> Union[None, dict]:
+    def run(self, parameters: Parameters) -> Union[int, None]:
         self._logger.debug(f"Parameters: {parameters.to_json()}")
 
         sector_name = parameters.sector_name
@@ -199,7 +199,7 @@ class AutoPost(Service):
             quarter=quarter
         )
 
-    def auto(self, sector_list: List[dict] = None, rules: dict = None) -> Union[None, dict]:
+    def auto(self, sector_list: List[dict] = None, rules: dict = None) -> Union[int, None]:
         if sector_list is None or len(sector_list) == 0:
             sector_list = self._kiwoom.get_sector_list()
 

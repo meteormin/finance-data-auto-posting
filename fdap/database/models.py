@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP, Text, Boolean, Foreig
 
 
 class Posts(Base):
-    __tablename__ = 'posts'
+    __tablename__ = 'fdap_manage_posts'
     post_id = Column(Integer, primary_key=True)
     post_subject = Column(String(255), nullable=False)
     post_contents = Column(Text, nullable=False)
@@ -22,15 +22,15 @@ class Posts(Base):
 
 
 class UploadedImage(Base):
-    __tablename__ = 'uploaded_image'
+    __tablename__ = 'fdap_manage_uploaded_image'
     image_id = Column(Integer, primary_key=True)
-    post_id = Column(Integer, ForeignKey('posts.post_id'), nullable=True)
+    post_id = Column(Integer, ForeignKey('fdap_manage_posts.post_id'), nullable=True)
     image_url = Column(String(255), nullable=False)
     image_path = Column(String(255), nullable=False)
 
 
 class LinkedPost(Base):
-    __tablename__ = 'linked_post'
+    __tablename__ = 'fdap_manage_linked_post'
     link_id = Column(Integer, primary_key=True)
-    parent_id = Column(Integer, ForeignKey('posts.post_id'))
-    child_id = Column(Integer, ForeignKey('posts.post_id'))
+    parent_id = Column(Integer, ForeignKey('fdap_manage_posts.post_id'))
+    child_id = Column(Integer, ForeignKey('fdap_manage_posts.post_id'))

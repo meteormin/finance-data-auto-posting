@@ -1,4 +1,4 @@
-from prototype.handler import Handler
+from fdap.prototype.handler import Handler
 from fdap.app.refine.refine_data import RefineData
 from fdap.app.opendart.finance_data import FinanceData
 from fdap.app.kiwoom.basic_info import BasicInfo
@@ -44,7 +44,7 @@ class Infographic(Handler):
         return self.handle()
 
     def handle(self):
-        from prototype.refine import Refine
+        from fdap.prototype.refine import Refine
         from fdap.app.infographic.table import Table
         from fdap.app.infographic.chart import Chart
         from fdap.definitions import ROOT_DIR

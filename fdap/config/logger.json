@@ -16,7 +16,7 @@
       "class": "logging.handlers.TimedRotatingFileHandler",
       "level": "DEBUG",
       "formatter": "simple",
-      "filename": "logs/automatic-posting.log",
+      "filename": "fdap/logs/automatic-posting.log",
       "when": "midnight",
       "interval": 1,
       "encoding": "utf-8"
@@ -25,7 +25,7 @@
       "class": "logging.handlers.TimedRotatingFileHandler",
       "level": "DEBUG",
       "formatter": "simple",
-      "filename": "logs/tests/test.log",
+      "filename": "fdap/logs/tests/test.log",
       "when": "midnight",
       "interval": 1,
       "encoding": "utf-8"

@@ -57,10 +57,13 @@ def config_ini(name: str) -> ConfigParser:
 
 
 def config_json(name: str) -> dict:
-    config_parser = ConfigParser()
-
-    with open(CONFIG_PATH + '/{filename}.json'.format(filename=name)) as f:
+    with open(CONFIG_PATH + '/{filename}.json'.format(filename=name), 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+def write_config_json(name, data: dict):
+    with open(CONFIG_PATH + '/{filename}.json'.format(filename=name), 'w', encoding='utf-8') as f:
+        return json.dump(data, f)
 
 
 def object_to_json(obj: object):

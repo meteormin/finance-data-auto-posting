@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block container_head %}
+config
+{% endblock container_head %}
+{% block container_sub %}
+{{module}}
+{% endblock container_sub %}
+{% block content %}
+<div class="card-header">
+    <i class="fas fa-cogs me-1"></i>
+    {{module}} account
+</div>
+
+<div class="card-body">
+    <form action="{% url 'write_config' module %}" method="post">
+        {% csrf_token %}
+        {% if module == 'koapy' %}
+        <div class="form-group">
+            <label for="txt_id">ID</label>
+            <input type="text" class="form-control" id="txt_id" aria-describedby="idHelp" name="kw_id"
+                   placeholder="ID" value="{{config.account.id}}">
+            <small id="idHelp" class="form-text text-muted">키움 증권 ID</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="passwd">Password</label>
+            <input type="password" class="form-control" id="passwd" name="kw_pass" placeholder="Password" value="">
+        </div>
+
+        {% endif %}
+
+        {% if module == 'database' %}
+        <div class="form-group">
+            <label for="txt_db">DataBase Name</label>
+            <input type="text" class="form-control" id="txt_db" aria-describedby="dbHelp" name="db_name"
+                   placeholder="db name" value="{{config.mysql.db}}">
+            <small id="dbHelp" class="form-text text-muted">데이터 베이스 이름</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="db_id">ID</label>
+            <input type="text" class="form-control" id="db_id" name="db_id" placeholder="id" value="{{config.mysql.id}}"
+                   aria-describedby="dbIdHelp">
+            <small id="dbIdHelp" class="form-text text-muted">DB 사용자</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="db_pass">Password</label>
+            <input type="password" class="form-control" id="db_pass" name="db_pass" placeholder="Password"
+                   value="{{config.mysql.password}}">
+        </div>
+        {% endif %}
+
+        {% if module == 'opendart' %}
+        <div class="form-group">
+            <label for="txt_url">URL</label>
+            <input type="text" class="form-control" id="txt_url" name="op_url" aria-describedby="urlHelp"
+                   placeholder="url" value="{{config.api.url}}">
+            <small id="urlHelp" class="form-text text-muted">URL</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="api_key">Api Key</label>
+            <input type="password" class="form-control" id="api_key" name="op_key" placeholder="key" value="{{config.api.api_key}}"
+                   aria-describedby="apiKeyHelp">
+            <small id="apiKeyHelp" class="form-text text-muted">API Key</small>
+        </div>
+        {% endif %}
+
+        {% if module == 'tistory' %}
+        <div><strong>카카오</strong><hr></div>
+        <div class="form-group">
+            <label for="kakao_id">카카오 계정</label>
+            <input type="text" class="form-control" id="kakao_id" name="kakao_id" aria-describedby="kakaoIdHelp"
+                   placeholder="kakao id" value="{{config.kakao.id}}">
+            <small id="kakaoIdHelp" class="form-text text-muted">카카오 계정</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="kakao_pass">카카오 비밀번호</label>
+            <input type="password" class="form-control" id="kakao_pass" name="kakao_pass" placeholder="kakao_pass" value="{{config.api.api_key}}"
+                   aria-describedby="kakaoPassHelp">
+            <small id="kakaoPassHelp" class="form-text text-muted">카카오 비밀번호</small>
+        </div>
+        <br>
+        <br>
+        <div><strong>티스토리 API</strong><hr></div>
+         <div class="form-group">
+            <label for="t_url">URL</label>
+            <input type="text" class="form-control" id="t_url" name="ts_url" aria-describedby="tUrl"
+                   placeholder="url" value="{{config.api.url}}">
+            <small id="tUrl" class="form-text text-muted">URL</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="client_id">Client ID</label>
+            <input type="password" class="form-control" id="client_id" name="client_id" placeholder="client_id" value="{{config.api.client_id}}"
+                   aria-describedby="clientId">
+            <small id="clientId" class="form-text text-muted">Client Id</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="client_secret">Client Secret</label>
+            <input type="password" class="form-control" id="client_secret" name="client_secret" placeholder="client_secret" value="{{config.api.client_secret}}"
+                   aria-describedby="clientSecret">
+            <small id="clientSecret" class="form-text text-muted">Client Secret</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="redirect_uri">Redirect URI</label>
+            <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" placeholder="redirect_url" value="{{config.api.redirect_uri}}"
+                   aria-describedby="redirectUri">
+            <small id="redirectUri" class="form-text text-muted">Redirect URI</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="blog_name">Blog Name</label>
+            <input type="text" class="form-control" id="blog_name" name="blog_name" placeholder="blog name" value="{{config.api.blog_name}}"
+                   aria-describedby="blogName">
+            <small id="blogName" class="form-text text-muted">Blog Name</small>
+        </div>
+        <br>
+        <br>
+        <div><strong>Selenium WebDriver</strong><hr></div>
+        <div class="form-group">
+            <label for="driver_name">Driver</label>
+            <input type="text" class="form-control" id="driver_name" name="driver" aria-describedby="driverName"
+                   placeholder="url" value="{{config.webdriver.driver_name}}">
+            <small id="driverName" class="form-text text-muted">Driver Name</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="confirm_btn">확인 버튼</label>
+            <input type="text" class="form-control" id="confirm_btn" name="confirm_btn" aria-describedby="confirmBtn"
+                   placeholder="confirm btn" value="{{config.webdriver.confirm_btn}}">
+            <small id="confirmBtn" class="form-text text-muted">확인 버튼 클래스 셀렉터</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="kakao_login_link">카카오 로그인 링크</label>
+            <input type="text" class="form-control" id="kakao_login_link" name="kakao_login_link" aria-describedby="kLink"
+                   placeholder="" value="{{config.webdriver.kakao_login_link}}">
+            <small id="kLink" class="form-text text-muted">카카오 로그인 링크 클래스 셀렉터</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="kakao_email_input">카카오 계정 input tag</label>
+            <input type="text" class="form-control" id="kakao_email_input" name="kakao_email_input" aria-describedby="kEmail"
+                   placeholder="" value="{{config.webdriver.kakao_email_input}}">
+            <small id="kEmail" class="form-text text-muted">카카오 계정 input 클래스 셀렉터</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="kakao_pass_input">카카오 비밀번호 input tag</label>
+            <input type="text" class="form-control" id="kakao_pass_input" name="kakao_pass_input" aria-describedby="kPass"
+                   placeholder="" value="{{config.webdriver.kakao_pass_input}}">
+            <small id="kPass" class="form-text text-muted">카카오 비밀번호 input 클래스 셀렉터</small>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="kakao_login_submit">카카오 로그인 버튼</label>
+            <input type="text" class="form-control" id="kakao_login_submit" name="kakao_login_submit" aria-describedby="kSubmit"
+                   placeholder="" value="{{config.webdriver.kakao_login_submit}}">
+            <small id="kSubmit" class="form-text text-muted">카카오 로그인 버튼 클래스 셀렉터</small>
+        </div>
+        {% endif %}
+        <br>
+        <button type="submit" class="btn btn-primary">등록</button>
+    </form>
+</div>
+{% endblock content%}

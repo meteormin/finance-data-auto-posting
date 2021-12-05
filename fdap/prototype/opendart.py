@@ -1,4 +1,4 @@
-from prototype.handler import Handler
+from fdap.prototype.handler import Handler
 from fdap.app.kiwoom.basic_info import BasicInfo
 from fdap.app.opendart.report_code import ReportCode
 from fdap.definitions import ROOT_DIR

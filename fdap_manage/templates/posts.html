@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block container_head %}
+    Posts
+{% endblock container_head %}
+{% block container_sub %}
+    Posts
+{% endblock container_sub %}
+{% block content %}
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Posts
+    </div>
+    <div class="card-body">
+        <table id="posts_table" class="table table-hover table-bordered table-responsive-sm">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">제목</th>
+                <th scope="col">년도</th>
+                <th scope="col">Report Code(분기)</th>
+                <th scope="col">업종</th>
+                <th scope="col">URL</th>
+                <th scope="col">성공여부</th>
+                <th scope="col">작성일</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for post in post_list %}
+                <tr>
+                    <th scope="row">{{ post.post_id }}</th>
+                    <td>{{ post.post_subject }}</td>
+                    <td>{{ post.post_year }}</td>
+                    <td>{{ post.report_code }}</td>
+                    <td>{{ post.post_sector }}</td>
+                    <td><a href="{{ post.post_url }}">{{ post.post_url }}</a></td>
+                    <td>{{ post.is_success }}</td>
+                    <td>{{ post.created_at }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

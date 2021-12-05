@@ -136,6 +136,6 @@ Django Framework
 
 ## 기능 명세
 
-## [Prototyping](./prototype)
+## [Prototyping](fdap/prototype)
 
 ## [changelog](./CHANGELOG.md)

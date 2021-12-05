@@ -51,6 +51,7 @@ class KiwoomService(Service):
         stock_info = self._koapy_wrapper.get_stock_info_by_sector_as_list(sector, market_code)
         rs_list = []
         for info in stock_info:
+            self._logger.debug(info.to_json())
             basic = self._koapy_wrapper.get_stock_basic_info_as_dict(info.code)
             rs_list.append(basic)
 

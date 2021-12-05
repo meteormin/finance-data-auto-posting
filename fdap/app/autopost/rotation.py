@@ -12,6 +12,8 @@ class RotationSector(RotationList):
         '002',
         '003',
         '004',
+        '021',
+        '025',
         '603',
         '604',
         '605'

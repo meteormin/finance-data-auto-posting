@@ -1,11 +1,11 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
 from fdap.app.kiwoom.stock_info import StockInfo
 from fdap.app.kiwoom.basic_info import BasicInfo
-from fdap.utils.customlogger import CustomLogger
+from fdap.app.contracts.logging import Logging
 from typing import List
 
 
-class KoapyWrapper:
+class KoapyWrapper(Logging):
     """KoapyWrapper is just wrapping koapy for me
 
     Attributes:
@@ -14,8 +14,8 @@ class KoapyWrapper:
     _koapy: KiwoomOpenApiPlusEntrypoint
 
     def __init__(self):
-        self._koapy = KiwoomOpenApiPlusEntrypoint()
-        self._logger = CustomLogger.logger('automatic-posting', __name__)
+        super().__init__()
+        self._koapy = None
         self._logger.info('init: %s', __name__)
         self._logger.info('Auto Login')
         self.connect()
@@ -24,7 +24,12 @@ class KoapyWrapper:
     def __del__(self):
         self.disconnect()
 
+    def _create_koapy(self):
+        self._koapy = KiwoomOpenApiPlusEntrypoint()
+
     def connect(self):
+        if not isinstance(self._koapy, KiwoomOpenApiPlusEntrypoint):
+            self._create_koapy()
         if not self.get_connect_state():
             self._koapy.EnsureConnected()
 
@@ -33,13 +38,20 @@ class KoapyWrapper:
             self._logger.debug('close Koapy')
             self._koapy.close()
 
-    def get_connect_state(self):
+    def get_connect_state(self) -> bool:
         """can you check login
         Returns
-            bool: maybe?
+            bool:
         """
         self._logger.debug('Check Login...')
-        return self._koapy.GetConnectState()
+
+        try:
+            return bool(self._koapy.GetConnectState())
+        except ValueError as e:
+            self._logger.warning(e)
+            del self._koapy
+            self._create_koapy()
+            return False
 
     def koapy(self):
         """get koapy
@@ -124,8 +136,16 @@ class KoapyWrapper:
             sector (str): sector code
             market_code (str): market code, default='0'
         Returns:
-            list: [<stockinfo>]
+            list: [<Stockinfo>]
         """
+
+        sectors = self.get_sector_list()
+
+        limit = 0
+        for s in sectors:
+            if sector == s['code']:
+                limit = int(s['count'])
+
         screenno = '2002'
 
         inputs = {
@@ -133,11 +153,17 @@ class KoapyWrapper:
             '업종코드': sector
         }
 
-        rqname = '업종별주가'
+        rqname = '업종별주가요청'
         trcode = 'OPT20002'
 
         multi = []
+        cnt = 0
         for event in self.transaction_call(rqname, trcode, screenno, inputs):
+            if limit != 0 and cnt >= limit:
+                self.disconnect()
+                self.connect()
+                break
+            self._logger.debug('Get event for request: {}'.format(rqname))
             multi_names = event.multi_data.names
             multi_values = event.multi_data.values
 
@@ -146,7 +172,10 @@ class KoapyWrapper:
                 stock_info = StockInfo()
                 for n, v in zip(multi_names, value.values):
                     temp_dict[n] = v
+
                 multi.append(stock_info.map(temp_dict))
+                self._logger.debug('stock_code: {}, count: {}'.format(stock_info.code, cnt))
+                cnt += 1
 
         return multi
 
@@ -159,7 +188,7 @@ class KoapyWrapper:
             '업종코드': sector
         }
 
-        rqname = '업종별월봉조회'
+        rqname = '업종현재가요청'
         trcode = 'OPT20001'
 
         multi = []
@@ -190,18 +219,18 @@ class KoapyWrapper:
 
         multi = []
         for event in self.transaction_call(rqname, trcode, screenno, inputs):
-            names = event.single_data.names
-
             multi_names = event.multi_data.names
             multi_values = event.multi_data.values
 
             for value in multi_values:
                 temp_dict = {}
-                for n, v in zip(names, value.values):
+                for n, v in zip(multi_names, value.values):
                     if n == '종목코드':
                         temp_dict['code'] = v
                     if n == '종목명':
                         temp_dict['name'] = v
+                    if n == '상장종목수':
+                        temp_dict['count'] = v
 
                 multi.append(temp_dict)
 

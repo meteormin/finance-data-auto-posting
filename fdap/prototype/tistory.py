@@ -1,5 +1,5 @@
-from prototype.handler import Handler
-from fdap.app.tistory.tistory_client import TistoryLogin, TistoryClient, LoginInfo
+from fdap.prototype.handler import Handler
+from fdap.app.tistory.tistory_client import TistoryClient, LoginInfo
 from fdap.utils.util import config_json
 
 

@@ -4,11 +4,10 @@ from fdap.utils.loggeradapter import LoggerAdapter
 from fdap.utils.customlogger import CustomLogger
 from datetime import datetime
 from fdap.app.contracts.jsonable import Jsonable
-from fdap.definitions import ROOT_DIR
+from fdap.definitions import PROTOTYPE_PATH
 from os.path import exists
 import traceback
 import json
-
 import os
 
 
@@ -65,7 +64,7 @@ class Handler(ABC):
         self.__console('ERROR', msg)
 
     def _save_json(self, result):
-        result_path = ROOT_DIR + '/../prototype/results/'
+        result_path = PROTOTYPE_PATH + '/results/'
         if not exists(result_path):
             os.mkdir(result_path)
         with open(result_path + self.TAG + '.json', 'w+', encoding='utf-8') as f:

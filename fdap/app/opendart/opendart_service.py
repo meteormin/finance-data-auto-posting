@@ -79,7 +79,10 @@ class OpenDartService(Service):
         if isinstance(single_acnt, dict):
             if 'list' in single_acnt:
                 single = self._div_by_stock(Acnt().map_list(single_acnt['list']))
+        return single
 
+    def get_recent(self, corp_code: str, year: str, report_code: ReportCode) -> Union[Dict[str, AcntCollection], None]:
+        single = self.get_single(corp_code, year, report_code)
         if single is None:
             max_count = 8
             count = 0
@@ -93,14 +96,15 @@ class OpenDartService(Service):
                 if single is not None:
                     return single
                 count += 1
-
         return single
 
     def get_multi(self, corp_codes: list, year: str, report_code: ReportCode) -> Dict[str, AcntCollection]:
         self._logger.debug('request get multiple corp accounts')
         multi = {}
         for corp_code in corp_codes:
-            multi.update(self.get_single(corp_code, year, report_code))
+            single = self.get_single(corp_code, year, report_code)
+            if single is not None:
+                multi.update(single)
         return multi
 
     def get_deficit_count(self, corp_code: str, year: str, count: int = 3):

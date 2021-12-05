@@ -52,7 +52,7 @@ class TistoryLogin(BlogLogin):
 
         self._logger.debug(url)
 
-        return self._set_response(requests.get(url))
+        return self._set_response(requests.get(url, verify=False))
 
     def _authorize(self, login_info: LoginInfo):
         options = webdriver.ChromeOptions()
@@ -150,7 +150,7 @@ class Post(BlogPost):
         })
 
         self._logger.debug(url)
-        return self._set_response(requests.get(url))
+        return self._set_response(requests.get(url, verify=False))
 
     def read(self, post_id: int):
         method = self._resource + '/read'
@@ -159,7 +159,7 @@ class Post(BlogPost):
             'blogName': self.blog_name,
             'postId': post_id
         })
-        return self._set_response(requests.get(url))
+        return self._set_response(requests.get(url, verify=False))
 
     def write(self, post: BlogPostData):
         method = self._resource + '/write'
@@ -172,7 +172,7 @@ class Post(BlogPost):
 
         url = make_url(self.get_host(), method)
 
-        return self._set_response(requests.post(url, data=post_data, headers=self._user_agent))
+        return self._set_response(requests.post(url, data=post_data, headers=self._user_agent, verify=False))
 
     def modify(self, obj: BlogPostData):
         pass
@@ -186,7 +186,7 @@ class Post(BlogPost):
             'output': 'json'
         })
 
-        return self._set_response(requests.post(url, files=files, headers=self._user_agent))
+        return self._set_response(requests.post(url, files=files, headers=self._user_agent, verify=False))
 
 
 class Apis(BlogEndPoint):

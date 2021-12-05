@@ -1,4 +1,4 @@
-from prototype.handler import Handler
+from fdap.prototype.handler import Handler
 from fdap.app.opendart.report_code import ReportCode
 from fdap.app.opendart.opendart_data import AcntCollection
 
@@ -8,8 +8,8 @@ class Refine(Handler):
 
     def handle(self):
         from fdap.app.refine.refine import Refine
-        from prototype.kiwoom import Kiwoom
-        from prototype.opendart import Opendart
+        from fdap.prototype.kiwoom import Kiwoom
+        from fdap.prototype.opendart import Opendart
 
         params = self.get_parameters()
         sector = None

@@ -1,10 +1,11 @@
 ﻿import click
 from os.path import exists
 import importlib
-from prototype.handler import Handler
+from fdap.prototype.handler import Handler
 from fdap.utils.util import camel, is_admin
 
-package_name = 'prototype'
+package_path = 'fdap/prototype'
+package_name = 'fdap.prototype'
 
 
 def query_to_dict(query_str: str):
@@ -31,7 +32,7 @@ def main(name: str, save: bool, parameters: str):
     """
     click.echo('NAME: ' + name)
     click.echo('CLASS: ' + camel(name))
-    if exists('{package}/{name}.py'.format(package=package_name, name=name)):
+    if exists('{package}/{name}.py'.format(package=package_path, name=name)):
         package = importlib.import_module(package_name)
         module = importlib.import_module('{package}.{name}'.format(package=package_name, name=name))
 

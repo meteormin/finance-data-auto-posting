@@ -28,7 +28,7 @@ class PostsRepository(Repo):
         query = self._session.query(Posts)
         return query.order_by(desc(Posts.post_id)).first()
 
-    def create(self, data: PostDto):
+    def create(self, data: PostDto) -> int:
         if isinstance(data, PostDto):
             entity = Posts()
             entity.post_subject = data.title
@@ -45,7 +45,8 @@ class PostsRepository(Repo):
             self._session.add(entity)
             self._session.commit()
 
-            return self.all()[-1]
+            new_entity = self.all()[-1]
+            return new_entity.post_id
 
     def find(self, identifier: Union[str, int]) -> Posts:
         return self._session.query(Posts).get(identifier)
@@ -56,10 +57,10 @@ class PostsRepository(Repo):
     def find_by_sector(self, sector: str, year: str, q: str):
         return self._session.query(Posts).filter_by(post_sector=sector, post_year=year, report_code=q).all()
 
-    def update(self, identifier: Union[str, int], data: PostDto):
+    def update(self, identifier: Union[str, int], data: PostDto) -> bool:
         entity = self.find(identifier)
         if entity is None:
-            return None
+            return False
         else:
             entity.post_subject = data.title
             entity.post_contents = data.content
@@ -70,8 +71,9 @@ class PostsRepository(Repo):
             entity.post_tags = data.tag
             self._session.add(entity)
             self._session.commit()
+            return True
 
-    def delete(self, identifier: Union[str, int]):
+    def delete(self, identifier: Union[str, int]) -> bool:
         entity = self.find(identifier)
         self._session.query(entity).delete()
         self._session.commit()

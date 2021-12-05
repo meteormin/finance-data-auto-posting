@@ -17,7 +17,7 @@ class OpenDartClient(Client):
     def get_corp_codes(self) -> Union[Dict[str, str], None]:
         end_point = '/api/corpCode.xml'
         url = make_url(host=self.get_host(), method=end_point, parameters={'crtfc_key': self._api_key})
-        self._response = requests.get(url)
+        self._response = requests.get(url, verify=False)
         res = self._response.content
         if res is not None:
             with zipfile.ZipFile(io.BytesIO(res)) as zip_ref:
@@ -37,7 +37,7 @@ class OpenDartClient(Client):
             'reprt_code': report_code
         })
         self._logger.debug('request url: {}'.format(url))
-        return self._set_response(requests.get(url))
+        return self._set_response(requests.get(url, verify=False))
 
     def get_multi(self, corp_codes: list, year: str, report_code: str):
         end_point = '/api/fnlttMultiAcnt.json'
@@ -50,4 +50,4 @@ class OpenDartClient(Client):
             'reprt_code': report_code
         })
 
-        return self._set_response(requests.get(url))
+        return self._set_response(requests.get(url, verify=False))

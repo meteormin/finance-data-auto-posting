@@ -39,13 +39,9 @@ Django Framework
 
 [requirements.txt](requirements.txt)
 
-## 설치방법
+## [설치방법](https://fortunate-trouble-156.notion.site/25848c0a4df74eada86c30de96326092)
 
-> 노션 문서 생성 예정
-
-## 사용법
-
-> 노션 문서 생성 예정
+## [사용법](https://fortunate-trouble-156.notion.site/537328c51440479eabac76fce5963c1c)
 
 ## 화면 설계
 

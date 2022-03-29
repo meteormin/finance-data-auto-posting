@@ -1,5 +1,5 @@
 from django import forms
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 
 class ConfigForm(forms.Form):
@@ -15,8 +15,8 @@ class KoapyForm(ConfigForm):
     def to_dict(self) -> dict:
         return {
             'account': {
-                'id': self.kw_id,
-                'password': self.kw_pass
+                'id': self.data['kw_id'],
+                'password': self.data['kw_pass']
             }
         }
 
@@ -31,10 +31,10 @@ class DataBaseForm(ConfigForm):
     def to_dict(self) -> dict:
         return {
             self.dbms: {
-                'id': self.db_id,
-                'password': self.db_pass,
+                'id': self.data['db_id'],
+                'password': self.data['db_pass'],
                 'host': self.host,
-                'db': self.db_name
+                'db': self.data['db_name']
             }
         }
 
@@ -46,8 +46,8 @@ class OpenDartForm(ConfigForm):
     def to_dict(self) -> dict:
         return {
             'api': {
-                'url': self.op_url,
-                'api_key': self.op_key
+                'url': self.data['op_url'],
+                'api_key': self.data['op_key']
             }
         }
 
@@ -72,26 +72,26 @@ class TistoryForm(ConfigForm):
     def to_dict(self) -> dict:
         return {
             'kakao': {
-                'id': self.kakao_id,
-                'password': self.kakao_pass
+                'id': self.data['kakao_id'],
+                'password': self.data['kakao_pass']
             },
             'api': {
-                'url': self.ts_url,
-                'client_id': self.client_id,
-                'client_secret': self.client_secret,
-                'redirect_uri': self.redirect_uri,
+                'url': self.data['ts_url'],
+                'client_id': self.data['client_id'],
+                'client_secret': self.data['client_secret'],
+                'redirect_uri': self.data['redirect_uri'],
                 'response_type': 'code',
-                'state': self.blog_name,
-                'blog_name': self.blog_name,
+                'state': self.data['blog_name'],
+                'blog_name': self.data['blog_name'],
                 'user_agent': self.USER_AGENT,
             },
             'webdriver': {
-                'driver_name': self.driver,
-                'confirm_btn': self.confirm_btn,
-                'kakao_login_link': self.kakao_login_link,
-                'kakao_email_input': self.kakao_email_input,
-                'kakao_pass_input': self.kakao_pass_input,
-                'kakao_login_submit': self.kakao_login_submit
+                'driver_name': self.data['driver'],
+                'confirm_btn': self.data['confirm_btn'],
+                'kakao_login_link': self.data['kakao_login_link'],
+                'kakao_email_input': self.data['kakao_email_input'],
+                'kakao_pass_input': self.data['kakao_pass_input'],
+                'kakao_login_submit': self.data['kakao_login_submit']
             }
         }
 

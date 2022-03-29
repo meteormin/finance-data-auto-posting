@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Posts
@@ -63,4 +65,4 @@ def write_config(request, module):
         data = get_form(module, request.POST)
         conf = write_config_json(module, data.to_dict())
 
-    return HttpResponse(request)
+    return redirect('config', module=module)

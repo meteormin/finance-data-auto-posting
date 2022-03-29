@@ -2,7 +2,7 @@ import dataclasses
 from fdap.utils.data import BaseData, BaseCollection
 from fdap.app.kiwoom.basic_info import BasicInfo
 from fdap.app.opendart.finance_data import FinanceData
-from fdap.app.contracts.convertible import TableData
+from fdap.contracts.convertible import TableData
 from typing import List
 
 

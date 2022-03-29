@@ -11,6 +11,7 @@ class Posts(models.Model):
     post_sector = models.CharField(max_length=255, null=False)
     post_year = models.CharField(max_length=255, null=False)
     report_code = models.CharField(max_length=10, null=False)
+    stock_condition = models.IntegerField(default=1, null=True)
     is_success = models.BooleanField(default=False, null=False)
     post_url = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(null=True)

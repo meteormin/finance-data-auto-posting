@@ -1,7 +1,7 @@
 import requests
 import json
 from typing import Union
-from fdap.app.contracts.logging import Logging
+from fdap.contracts.logging import Logging
 
 
 class Client(Logging):

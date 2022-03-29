@@ -1,4 +1,4 @@
-from fdap.app.contracts.service import Service
+from fdap.contracts.service import Service
 from fdap.app.opendart.report_code import ReportCode
 from fdap.app.kiwoom.kiwoom_service import KiwoomService
 from fdap.app.opendart.opendart_service import OpenDartService
@@ -12,10 +12,8 @@ from fdap.app.autopost.template import *
 from fdap.app.repositories.post_repository import PostsRepository
 from fdap.app.tistory.tistory_data import PostData
 from fdap.app.tistory.tistory_data import PostDto
-from fdap.utils.util import config_json
-from fdap.app.tistory.tistory_data import LoginInfo
 from fdap.app.autopost.parameters import Parameters
-from fdap.app.autopost.rotation import RotationSector
+from fdap.app.autopost.rotation import RotationSector, StockCondition
 from fdap.utils.util import get_quarter
 from typing import Dict, Union, List
 from datetime import datetime
@@ -50,7 +48,12 @@ class AutoPost(Service):
     def close(self):
         self._kiwoom.disconnect()
 
-    def _make_data(self, sector: str, year: str, q: ReportCode):
+    def _make_data(self, parameters: Parameters):
+        sector = parameters.sector_code
+        year = parameters.year
+        q = ReportCode.get_by_index(parameters.quarter)
+        condition = parameters.stock_condition
+
         self._logger.debug('make_data')
         stock_list = self._kiwoom.get_stock_list_by_sector(sector)
         self._logger.debug('stock_list: ' + str(len(stock_list)))
@@ -69,7 +72,7 @@ class AutoPost(Service):
         self._logger.debug(f"refine_data: {str(refine_collection.count())}")
 
         table = Table(refine_collection)
-        df = table.make_dataframe()
+        df = table.make_dataframe(condition.value)
 
         if df is None:
             self._logger.debug('make_data is None')
@@ -92,24 +95,6 @@ class AutoPost(Service):
             'table': table_file_path,
             'chart': chart_dict
         }
-
-    def _blog_login(self, platform: str = 'tistory'):
-        config = config_json(platform)
-        api_config = config['api']
-        kakao_config = config['kakao']
-
-        login_info = LoginInfo(
-            client_id=api_config['client_id'],
-            client_secret=api_config['client_secret'],
-            redirect_uri=api_config['redirect_uri'],
-            response_type=api_config['response_type'],
-            kakao_id=kakao_config['id'],
-            kakao_password=kakao_config['password'],
-            state=api_config['state']
-        )
-
-        self._tistory.login(login_info)
-        self._tistory.apis().post().access_token = self._tistory.access_token
 
     def _upload_file(self, file_path: str):
         with open(file_path, 'rb') as f:
@@ -143,24 +128,31 @@ class AutoPost(Service):
         sector = parameters.sector_code
         year = parameters.year
         report_code = ReportCode.get_by_index(parameters.quarter)
+        stock_condition = parameters.stock_condition
 
-        exist_post = self._repo.find_by_sector(sector, year, report_code.value)
-        self._logger.debug(exist_post)
-        if exist_post:
-            return None
-
-        data = self._make_data(sector, year, report_code)
-
-        self._blog_login(platform='tistory')
+        data = self._make_data(parameters)
 
         urls = self._upload_images(data)
 
-        subject = make_template(sector_name, year, ReportCode.get_index(report_code.value))
+        subject = make_subject(sector_name, year, str(ReportCode.get_index(report_code.value)))
         table = urls['table']
-        contents = make_img_tag(f'{sector_name} 상위 10개 종목', table)
+
+        if stock_condition == StockCondition.UP:
+            condition_txt = '상위'
+        else:
+            condition_txt = '하위'
+
+        contents = Template(
+            title=f'{sector_name} {condition_txt} 10개 종목',
+            image={'name': f'{sector_name} {condition_txt} 10개 종목', 'src': table}
+        ).make()
 
         for ko, chart in urls['chart'].items():
-            contents += make_img_tag(f'{sector_name}: {ko}', chart)
+            contents += Template(
+                title=f'{sector_name}: {ko}',
+                image={'name': f'{sector_name}: {ko}', 'src': chart},
+                description=f'{ko}: is test'
+            ).make()
 
         post = PostData(
             title=subject,
@@ -196,7 +188,8 @@ class AutoPost(Service):
             sector_code=sector['code'],
             sector_name=sector['name'],
             year=str(date.year),
-            quarter=quarter
+            quarter=quarter,
+            stock_condition=sector['condition']
         )
 
     def auto(self, sector_list: List[dict] = None, rules: dict = None) -> Union[int, None]:

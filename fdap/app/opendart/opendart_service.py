@@ -2,11 +2,11 @@ import xmltodict
 import os
 from fdap.app.opendart.opendart_client import OpenDartClient
 from fdap.app.opendart.opendart_data import *
-from fdap.utils.util import config_json, currency_to_int
+from fdap.utils.util import currency_to_int
+from fdap.config.config import Config
 from fdap.app.opendart.report_code import ReportCode
-from fdap.app.contracts.service import Service
+from fdap.contracts.service import Service
 from typing import List, Dict, Union
-from configparser import ConfigParser
 
 
 class OpenDartService(Service):
@@ -18,7 +18,7 @@ class OpenDartService(Service):
     Q3: ReportCode.Q3 = ReportCode.Q3
     Q4: ReportCode.Q4 = ReportCode.Q4
     QUARTERS: dict = ReportCode.__members__
-    _config: Union[ConfigParser, dict]
+    _config: dict
     _client: OpenDartClient
 
     def __init__(self, url: str = None, api_key: str = None):
@@ -29,7 +29,7 @@ class OpenDartService(Service):
         """
         super().__init__()
         if url is None or api_key is None:
-            self._config = config_json('opendart')
+            self._config = Config.OPENDART
             url = self._config['api']['url']
             api_key = self._config['api']['api_key']
 

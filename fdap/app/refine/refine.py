@@ -1,7 +1,7 @@
 from typing import List, Dict, Union
 from fdap.app.opendart.finance_data import FinanceData
 from fdap.app.opendart.opendart_data import AcntCollection
-from fdap.app.contracts.service import Service
+from fdap.contracts.service import Service
 from fdap.app.refine.refine_data import RefineData
 from fdap.app.refine.refine_data import RefineCollection
 from fdap.app.kiwoom.basic_info import BasicInfo
@@ -43,9 +43,9 @@ class Refine(Service):
         issue_cnt = int((basic_info.capital * 100000000) / basic_info.current_price)
         refine_data.finance_data.calculate_flow_rate()
         refine_data.finance_data.calculate_debt_rate()
-        refine_data.finance_data.calculate_roe()
         refine_data.finance_data.calculate_pbr(basic_info.current_price, issue_cnt)
         refine_data.finance_data.calculate_per(basic_info.current_price, issue_cnt)
+        refine_data.finance_data.calculate_roe(basic_info.current_price, issue_cnt)
 
         return refine_data
 

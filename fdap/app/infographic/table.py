@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from fdap.app.contracts.convertible import TableData
+from fdap.contracts.convertible import TableData
 from typing import Union
 import dataframe_image as dfi
 from os.path import exists
@@ -48,7 +48,7 @@ class Table:
         after_sort = before_sort
         return after_sort[col]
 
-    def make_dataframe(self) -> Union[DataFrame, None]:
+    def make_dataframe(self, stock_cond: int = 1, cnt: int = 10) -> Union[DataFrame, None]:
         data = self._data
 
         if isinstance(data.to_dict(), list):
@@ -64,7 +64,14 @@ class Table:
 
         df = df.rename(columns=self.get_ko_col_names())
 
-        return df.head(10)
+        if stock_cond == 1:
+            df = df.head(cnt)
+        elif stock_cond == 2:
+            df = df.tail(cnt)
+        else:
+            df = df.head(cnt)
+
+        return df
 
     def save_img(self, file_path: str) -> bool:
         df = self.make_dataframe()

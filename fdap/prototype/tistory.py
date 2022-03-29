@@ -1,6 +1,6 @@
 from fdap.prototype.handler import Handler
 from fdap.app.tistory.tistory_client import TistoryClient, LoginInfo
-from fdap.utils.util import config_json
+from fdap.config.config import Config
 
 
 class Tistory(Handler):
@@ -19,7 +19,7 @@ class Tistory(Handler):
     def login(self):
         self.TAG += '-login'
 
-        config = config_json('tistory')
+        config = Config.TISTORY
         api_config = config['api']
         kakao_config = config['kakao']
 
@@ -30,8 +30,8 @@ class Tistory(Handler):
             client_secret=api_config['client_secret'],
             redirect_uri=api_config['redirect_uri'],
             response_type=api_config['response_type'],
-            kakao_id=kakao_config['id'],
-            kakao_password=kakao_config['password'],
+            login_id=kakao_config['id'],
+            login_password=kakao_config['password'],
             state=api_config['state']
         )
 
@@ -44,7 +44,7 @@ class Tistory(Handler):
         from fdap.app.tistory.tistory_client import TistoryClient
         from fdap.utils.util import config_json
 
-        config = config_json('tistory')
+        config = Config.TISTORY
         api_config = config['api']
 
         client = TistoryClient(api_config['url'], config)

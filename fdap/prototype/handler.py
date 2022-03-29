@@ -3,7 +3,7 @@ from fdap.utils.util import object_to_json
 from fdap.utils.loggeradapter import LoggerAdapter
 from fdap.utils.customlogger import CustomLogger
 from datetime import datetime
-from fdap.app.contracts.jsonable import Jsonable
+from fdap.contracts.jsonable import Jsonable
 from fdap.definitions import PROTOTYPE_PATH
 from os.path import exists
 import traceback
@@ -30,22 +30,20 @@ class Handler(ABC):
     def run(self):
         try:
             result = self.handle()
-            self._logger.debug('success')
-            self._logger.debug('result:' + str(result))
+            self.debug('success')
+            self.debug('result:' + str(result))
             self.info(str(result))
             if self._save_result:
                 self._save_json(result)
         except (Exception,):
-            self._logger.error('fail')
-            self._logger.error('ERROR:')
-            self._logger.error(traceback.print_exc())
-            self.error('Fail test')
+            self.error('Fail:')
+            self.error('ERROR:')
             self.error(traceback.print_exc())
 
     def __console(self, level, msg):
         now = datetime.now()
         now.strftime('%Y-%m-%d %H:%M:%S,%f')
-        print(self.output_format.format(datetime=now, name=self.TAG, level='INFO', message=msg))
+        print(self.output_format.format(datetime=now, name=self.TAG, level=level, message=msg))
 
     def info(self, msg: str):
         self._logger.info(msg)

@@ -1,14 +1,12 @@
-import selenium.common.exceptions
-import time
 import requests
 from typing import Union
-from fdap.utils.util import make_url, get_query_str_dict
+from fdap.utils.util import make_url
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from fdap.definitions import ROOT_DIR
 from fdap.utils.customlogger import CustomLogger
-from fdap.app.contracts.blog_client import *
 from fdap.app.tistory.tistory_data import *
+from fdap.app.tistory.webdriver import WebDriverHandler
+from fdap.contracts.blog_client import *
 
 
 class TistoryLogin(BlogLogin):
@@ -61,6 +59,13 @@ class TistoryLogin(BlogLogin):
         web_driver = webdriver.Chrome(executable_path=ROOT_DIR + '\\' + self._config['driver_name'],
                                       chrome_options=options)
 
+        handler = WebDriverHandler(
+            web_driver,
+            self._logger,
+            self._config,
+            login_info
+        )
+
         url = self.get_host()
         method = self._end_point + '/authorize'
         url = make_url(url, method, {
@@ -70,59 +75,7 @@ class TistoryLogin(BlogLogin):
             'state': login_info.state
         })
 
-        web_driver.get(url=url)
-        try:
-
-            element = web_driver.find_element(By.CSS_SELECTOR, self._config['confirm_btn'])
-            element.click()
-            url = web_driver.current_url
-        except selenium.common.exceptions.NoSuchElementException as e:
-            self._logger.warning('No Such Element 1: confirm_btn')
-            self._logger.warning(e.msg)
-
-        try:
-            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_login_link']).click()
-            self._logger.info('redirect kakao login: ' + web_driver.current_url)
-        except selenium.common.exceptions.NoSuchElementException as e:
-            self._logger.warning('fail redirect kakao login: ' + web_driver.current_url)
-            self._logger.warning(e.msg)
-        try:
-            web_driver.get(web_driver.current_url)
-            self._logger.info('request: ' + web_driver.current_url)
-        except selenium.common.exceptions.NoSuchElementException as e:
-            self._logger.warning(e.stacktrace)
-
-        self._logger.info('sleep 3s')
-        time.sleep(3)
-        try:
-            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_email_input']) \
-                .send_keys(login_info.kakao_id)
-            self._logger.info('input email')
-
-            time.sleep(1)
-
-            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_pass_input']) \
-                .send_keys(login_info.kakao_password)
-            self._logger.info('input password')
-
-            web_driver.find_element(By.CSS_SELECTOR, self._config['kakao_login_submit']).click()
-            self._logger.info('submit login form')
-            self._logger.info('sleep 3s')
-            time.sleep(3)
-        except selenium.common.exceptions.NoSuchElementException as e:
-            self._logger.warning(e.msg)
-
-        try:
-            web_driver.find_element(By.CSS_SELECTOR, self._config['confirm_btn']).click()
-            self._logger.info('success login: ' + web_driver.current_url)
-        except selenium.common.exceptions.NoSuchElementException as e:
-            self._logger.warning('fail login: ' + web_driver.current_url)
-
-        url = web_driver.current_url
-        web_driver.close()
-        self._logger.info('close webdriver')
-
-        return get_query_str_dict(url)
+        return handler.run(url)
 
 
 class Post(BlogPost):
@@ -238,7 +191,7 @@ class TistoryClient(BlogClient):
         login = self.get_end_point(self._classes['login'])
         if isinstance(login, BlogLogin):
             login.login(login_info)
-            self.access_token = login.access_token
+            self.set_access_token(login.access_token)
             return {'access_token': self.access_token}
         return None
 

@@ -63,7 +63,7 @@ def config_json(name: str) -> dict:
 
 def write_config_json(name, data: dict):
     with open(CONFIG_PATH + '/{filename}.json'.format(filename=name), 'w', encoding='utf-8') as f:
-        return json.dump(data, f)
+        return json.dump(data, f, indent=2)
 
 
 def object_to_json(obj: object):

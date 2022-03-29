@@ -1,32 +1,33 @@
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class ReportCode(Enum):
-    Q1: str = '11013'
-    Q2: str = '11012'
-    Q3: str = '11014'
-    Q4: str = '11011'
+    Q1 = '11013'
+    Q2 = '11012'
+    Q3 = '11014'
+    Q4 = '11011'
 
     @classmethod
-    def get_by_str(cls, q: str):
+    def get_by_str(cls, q: str) -> __name__:
         for k, v in cls.__members__.items():
             if q == v.value:
                 return v
 
     @classmethod
-    def get_by_index(cls, i: int):
+    def get_by_index(cls, i: int) -> __name__:
         for k, v in enumerate(cls.__members__.values()):
             if k + 1 == i:
                 return v
 
     @classmethod
-    def get_index(cls, q: str):
+    def get_index(cls, q: str) -> int:
         for idx, v in enumerate(cls.__members__.values()):
             if v.value == q:
                 return idx + 1
 
     @classmethod
-    def sub(cls, quarter: str, sub_num: int):
+    def sub(cls, quarter: str, sub_num: int) -> __name__:
         has_attr = False
         for q in cls.__members__.values():
             if quarter == q.value:

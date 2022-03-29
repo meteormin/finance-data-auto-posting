@@ -12,6 +12,7 @@ class Posts(Base):
     post_sector = Column(String(3), nullable=False)
     post_year = Column(String(4), nullable=False)
     report_code = Column(String(10), nullable=False)
+    stock_condition = Column(Integer, nullable=True, default=1)
     is_success = Column(Boolean, nullable=False, default=False)
     post_url = Column(String(255), nullable=True)
     created_at = Column(TIMESTAMP, nullable=True)

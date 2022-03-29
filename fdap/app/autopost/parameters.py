@@ -1,3 +1,4 @@
+from fdap.app.autopost.rotation import StockCondition
 from fdap.utils.data import BaseData
 from dataclasses import dataclass
 
@@ -8,3 +9,4 @@ class Parameters(BaseData):
     sector_code: str
     year: str
     quarter: int
+    stock_condition: StockCondition

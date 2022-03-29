@@ -39,7 +39,7 @@ class Opendart(Handler):
         if stock_code:
             corp_code = service.get_corp_code_by_stock_code(stock_code)
             single_data = service.get_single(corp_code.corp_code, year, report_code)
-            collect = single_data[stock_code]
+            collect = single_data
         if stock_info:
             corp_codes = []
             for basic_info in stock_info:
@@ -52,6 +52,6 @@ class Opendart(Handler):
 
         for stock, c in collect.items():
             df = DataFrame.from_records(c.to_dict())
-            df.to_excel(ROOT_DIR + '/../prototype/results/' + stock + '.xlsx')
+            df.to_excel(ROOT_DIR + '/prototype/results/' + stock + '.xlsx')
 
         return collect

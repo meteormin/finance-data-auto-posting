@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from fdap.app.contracts.blog_client import BlogLoginInfo, BlogPostData
+from fdap.contracts.blog_client import BlogLoginInfo, BlogPostData
 
 
 @dataclass(frozen=True)
@@ -8,8 +8,8 @@ class LoginInfo(BlogLoginInfo):
     client_secret: str
     redirect_uri: str
     response_type: str
-    kakao_id: str
-    kakao_password: str
+    login_id: str
+    login_password: str
     state: str = ''
 
 

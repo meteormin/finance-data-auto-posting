@@ -1,7 +1,7 @@
 import dataclasses
 from fdap.app.opendart.opendart_service import OpenDartService
 from fdap.utils.data import BaseData
-from typing import Dict
+from typing import Dict, Union
 from fdap.app.opendart.opendart_data import AcntCollection
 from fdap.utils.customlogger import CustomLogger
 from fdap.utils.util import currency_to_int
@@ -39,7 +39,6 @@ class FinanceData(BaseData):
 
     def map(self, acnt: AcntCollection) -> __name__:
         """
-
         :param acnt: List[Acnt]
         :return FinanceData:
         """
@@ -66,6 +65,11 @@ class FinanceData(BaseData):
         return CustomLogger.logger('automatic-posting', __name__)
 
     def calculate_flow_rate(self):
+        """
+            유동 비율: (유동자산 / 유동부채) * 100
+        Returns:
+            FinanceData:
+        """
         try:
             self.flow_rate = round(self.current_assets / self.floating_debt * 100, 2)
         except ZeroDivisionError:
@@ -75,6 +79,11 @@ class FinanceData(BaseData):
         return self
 
     def calculate_debt_rate(self):
+        """
+            부채비율: (부채총계 / 자산총계) * 100
+        Returns:
+            FinanceData:
+        """
         try:
             self.debt_rate = round(self.total_debt / self.total_assets * 100, 2)
         except ZeroDivisionError:
@@ -83,31 +92,90 @@ class FinanceData(BaseData):
             self.debt_rate = 0.0
         return self
 
-    def calculate_per(self, current_price: int, issue_cnt: int):
+    def get_eps(self, issue_cnt: int) -> Union[int, float]:
+        """
+            EPS: 당기순이익 / 발행주식수
+        Args:
+            issue_cnt: 발행 주식 수
+
+        Returns:
+            Union[int, float]:
+        """
         try:
-            self.per = round(current_price / (self.net_income / issue_cnt), 2)
+            return round(self.net_income / issue_cnt, 2)
+        except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug('eps: {} / {}'.format(self.net_income, issue_cnt))
+        return 0
+
+    def calculate_per(self, current_price: int, issue_cnt: int):
+        """
+            PER: 주가 / EPS(순이익/발행주식수)
+        Args:
+            current_price: 현재가(주가)
+            issue_cnt: 발행주식수
+
+        Returns:
+
+        """
+        try:
+            self.per = round(current_price / self.get_eps(issue_cnt), 2)
         except ZeroDivisionError:
             logger = self.__logger()
             logger.debug('per:{} / ({} / {})'.format(current_price, self.net_income, issue_cnt))
             self.per = 0.0
         return self
 
-    def calculate_pbr(self, current_price: int, issue_cnt: int):
+    def get_bps(self, issue_cnt) -> Union[int, float]:
+        """
+            BPS: (자산총계 - 부채총계) / 발행주식수
+        Args:
+            issue_cnt:
+
+        Returns:
+            Union[int, float]
+        """
         try:
-            self.pbr = round(current_price / ((self.total_capital - self.total_debt) / issue_cnt), 2)
+            return round((self.current_assets - self.total_debt) / issue_cnt, 2)
+        except ZeroDivisionError:
+            logger = self.__logger()
+            logger.debug('bps:({} - {}) / {})'.format(self.current_assets, self.total_debt, issue_cnt))
+
+    def calculate_pbr(self, current_price: int, issue_cnt: int):
+        """
+            PBR: 주가 / BPS((자산총계 - 부채총계) / 발행주식수)
+        Args:
+            current_price:
+            issue_cnt:
+
+        Returns:
+
+        """
+        try:
+            self.pbr = round(current_price / self.get_bps(issue_cnt), 2)
         except ZeroDivisionError:
             logger = self.__logger()
             logger.debug(
-                'per:{} / (({} - {}) / {})'.format(current_price, self.total_capital, self.total_debt, issue_cnt))
+                'pbr:{} / (({} - {}) / {})'.format(current_price, self.current_assets, self.total_debt, issue_cnt))
             self.pbr = 0.0
         return self
 
-    def calculate_roe(self):
+    def calculate_roe(self, current_price: int, issue_cnt: int):
+        """
+            ROE: PBR / PER
+        Returns:
+
+        """
         try:
-            self.roe = round((self.net_income / self.total_capital) * 100, 2)
+            if self.pbr and self.per:
+                self.roe = round(self.pbr / self.per, 2)
+            else:
+                self.calculate_per(current_price, issue_cnt)
+                self.calculate_pbr(current_price, issue_cnt)
+                self.roe = round(self.pbr / self.per, 2)
         except ZeroDivisionError:
             logger = self.__logger()
             logger.debug(
-                'per:({} / {}) * 100'.format(self.net_income, self.total_capital))
+                'roe:({} / {}) * 100'.format(self.net_income, self.total_capital))
             self.roe = 0.0
         return self

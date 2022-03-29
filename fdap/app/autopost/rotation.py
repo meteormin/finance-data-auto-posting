@@ -1,6 +1,13 @@
-from fdap.app.contracts.rotation_list import RotationList
-from fdap.app.contracts.repositories import PostsRepository
+from fdap.contracts.rotation_list import RotationList
+from fdap.contracts.repositories import PostsRepository
+from enum import IntEnum, unique
 import collections
+
+
+@unique
+class StockCondition(IntEnum):
+    UP = 1
+    DOWN = 2
 
 
 class RotationSector(RotationList):
@@ -55,11 +62,15 @@ class RotationSector(RotationList):
         })
 
         cnt = 0
+        condition = StockCondition.UP
         while cnt < len(self._items):
             not_equals = 0
             for sector in sectors:
                 if sector.post_sector == self.current()['code']:
-                    self.next()
+                    if sector.stock_condition == StockCondition.DOWN.value:
+                        self.next()
+                    else:
+                        condition = StockCondition.DOWN
                     break
                 else:
                     not_equals += 1
@@ -67,4 +78,7 @@ class RotationSector(RotationList):
                 break
             cnt += 1
 
-        return self.current()
+        sector = self.current()
+        sector['condition'] = condition
+
+        return sector

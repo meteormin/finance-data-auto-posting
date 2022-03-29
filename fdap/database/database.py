@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, session
 from sqlalchemy.ext.declarative import declarative_base
-from fdap.utils.util import config_json
+from fdap.config.config import Config
 
-config = config_json('database')['mysql']
+config = Config.DATABASE['mysql']
 
 access_info = 'mysql://{id}:{passwd}@{host}/{db}?charset=utf8'.format(id=config['id'], passwd=config['password'],
                                                                       host=config['host'], db=config['db'])

@@ -1,7 +1,7 @@
 from koapy import KiwoomOpenApiPlusEntrypoint
 from fdap.app.kiwoom.stock_info import StockInfo
 from fdap.app.kiwoom.basic_info import BasicInfo
-from fdap.app.contracts.logging import Logging
+from fdap.contracts.logging import Logging
 from typing import List
 
 
@@ -139,8 +139,10 @@ class KoapyWrapper(Logging):
             list: [<Stockinfo>]
         """
 
+        # 업종 리스트를 가져온다.
         sectors = self.get_sector_list()
 
+        # 현재 입력 받은 업종의 개수를 찾아 limit(으)로 설정
         limit = 0
         for s in sectors:
             if sector == s['code']:
@@ -157,9 +159,11 @@ class KoapyWrapper(Logging):
         trcode = 'OPT20002'
 
         multi = []
+
+        # 현재 조회된 업종의 개수가 limit보다 크면 강제 종료 후 break
         cnt = 0
         for event in self.transaction_call(rqname, trcode, screenno, inputs):
-            if limit != 0 and cnt >= limit:
+            if cnt > limit:
                 self.disconnect()
                 self.connect()
                 break

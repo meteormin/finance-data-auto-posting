@@ -2,23 +2,26 @@ from datetime import datetime
 from typing import Union, Dict
 from sqlalchemy.orm import scoped_session
 from sqlalchemy import desc
-from fdap.app.contracts.repositories import PostsRepository as Repo
+from fdap.contracts.repositories import PostsRepository as Repo
 from fdap.app.tistory.tistory_data import PostDto
 from fdap.database.models import Posts
+from fdap.database.database import db_session, init_db
 
 
 class PostsRepository(Repo):
     _model = None
     _session = None
 
-    def __init__(self, model=None, db_session: scoped_session = None):
+    def __init__(self, session: scoped_session = None):
         """
         Args:
-            model: 장고 사용 시, 모델
-            db_session: SQLAlchemy 사용 시, db session
+            session: SQLAlchemy 사용, db session
         """
-        self._model = model
-        self._session = db_session
+        if session is None:
+            init_db()
+            session = db_session
+
+        self._session = session
 
     def all(self):
         query = self._session.query(Posts)

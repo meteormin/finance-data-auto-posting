@@ -9,11 +9,15 @@ class Config:
     TISTORY: dict = config_json('tistory')
 
     @classmethod
-    def list(cls):
-        return [
-            cls.DATABASE,
-            cls.KOAPY,
-            cls.LOGGER,
-            cls.OPENDART,
-            cls.TISTORY
-        ]
+    def all(cls) -> dict:
+        return {
+            'database': cls.DATABASE,
+            'koapy': cls.KOAPY,
+            'logger': cls.LOGGER,
+            'opendart': cls.OPENDART,
+            'tistory': cls.TISTORY
+        }
+
+    @classmethod
+    def get(cls, name: str) -> dict:
+        return cls.all()[name]

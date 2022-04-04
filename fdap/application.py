@@ -18,11 +18,11 @@ class Application:
             self.bootstrap(callback)
 
     def get(self, name: str) -> any:
-        self._container.providers.get(name)
+        return self._container.providers.get(name)()
 
     def bootstrap(self, callback: Callable):
         try:
             callback(self)
-        except [Exception, ] as e:
+        except Exception as e:
             self._logger.error('Failed Bootstrapping...')
             self._logger.error(e)
